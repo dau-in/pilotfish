@@ -138,9 +138,6 @@ a { color: inherit; text-decoration: none; }
 
 .device { display: grid; grid-template-rows: 1fr auto; justify-items: center; align-items: center; gap: 12px; min-width: 0; }
 .shot { position: relative; height: 380px; }
-.shot img { display: block; width: 100%; height: 100%; }
-/* The render's own LED (placed per render by MouseRender), painted in the colour the real one shows. */
-.shot .led { position: absolute; left: var(--led-x); top: var(--led-y); width: var(--led-w); height: var(--led-h); transform: translate(-50%, -50%); border-radius: 999px; background: var(--led, var(--accent)); }
 .device figcaption { display: flex; gap: 10px; align-items: baseline; font-size: var(--fs-small); color: var(--muted); }
 .device figcaption span:first-child { color: var(--text); }
 
