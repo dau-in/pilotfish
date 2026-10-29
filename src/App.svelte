@@ -13,7 +13,7 @@
   import {
     LIGHT, LOW_BATTERY, NATIVE_MAX, actionLabel, batteryText, buttonName, fmt, isDoubled, linkName,
   } from './lib/ui/shared.js';
-  import { apply, discard, follow, isDirty, stampText, studio } from './lib/ui/studio.svelte.js';
+  import { apply, discard, follow, isDirty, stampText, studio, undo } from './lib/ui/studio.svelte.js';
 
   const PAGES = ['mouse', 'buttons', 'settings'];
   const NAV = [
@@ -29,7 +29,15 @@
   onMount(() => {
     const onHash = () => (page = fromHash());
     addEventListener('hashchange', onHash);
-    const onKey = e => { if (e.key === 'Enter' && e.ctrlKey) apply(); };
+    const typing = el => el?.matches?.('input, textarea, select, [contenteditable]');
+    const onKey = e => {
+      if (e.key === 'Enter' && e.ctrlKey) apply();
+      // Ctrl+Z inside a field is the field's own undo.
+      if (e.key.toLowerCase() === 'z' && e.ctrlKey && !e.shiftKey && !typing(document.activeElement) && studio.undo) {
+        e.preventDefault();
+        undo();
+      }
+    };
     addEventListener('keydown', onKey);
     autoConnect();
     return () => { removeEventListener('hashchange', onHash); removeEventListener('keydown', onKey); };
@@ -117,10 +125,13 @@
         <div class="title-actions">
           <p class="link-state"><span>{linkName(mouse.kind)}</span>{#if mouse.asleep}<span>{t('battery.asleep')}</span>{:else if battery}<span class:low>{battery}</span>{/if}</p>
           <p class="stamp" class:error={studio.stamp.err}>{stampText(studio.stamp)}</p>
+          {#if studio.undo && !isDirty() && !studio.busy}
+            <button class="btn ghost" type="button" title={t('action.undoTitle')} onclick={() => undo()}>{t('action.undo')}</button>
+          {/if}
           {#if isDirty()}
             <div class="pending">
               <button class="btn ghost" type="button" onclick={discard}>{t('action.discard')}</button>
-              <button class="btn primary" type="button" disabled={studio.busy} onclick={apply}>{t('action.apply')}</button>
+              <button class="btn primary" type="button" disabled={studio.busy} onclick={() => apply()}>{t('action.apply')}</button>
             </div>
           {/if}
         </div>

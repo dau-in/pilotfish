@@ -9,7 +9,7 @@ Pilotfish configures the Attack Shark X11 mouse from the browser. It is a Svelte
 ```sh
 npm install
 npm run dev          # http://localhost:5173
-npm test             # node --test: protocol tests built from real USB captures
+npm test             # node --test: protocol and backup tests built from real USB captures
 npm run build        # dist/, including the generated service worker (sw.js)
 ```
 
@@ -20,6 +20,7 @@ Open `http://localhost:5173/?demo` to run the whole UI against a simulated mouse
 - `src/lib/protocol/index.js`: pure functions. Parses reports, builds packets, and decides whether a read confirms a write. No DOM, no I/O. Every byte layout is tested in `test/protocol.test.js`.
 - `src/lib/device/`: the transports. `hid.js` (WebHID) and `ble.js` (Web Bluetooth) expose the same link interface. `mouse.svelte.js` is the app-wide device state and the only place that writes to the mouse. `demo.js` is the fake link.
 - `src/lib/ui/`: screens and components. `studio.svelte.js` holds the draft the user edits before applying.
+- `src/lib/backup/`: the backup timeline in IndexedDB. `format.js` is pure (what a backup holds, file import and export) and tested in `test/backup.test.js`. Restoring a backup goes through `studio.svelte.js` like any edit, never straight to the device.
 - `src/lib/i18n/`: `en.js` (complete, the source of truth), `es.js` (may omit keys) and the `t()` helper.
 - `vite.config.js`: also writes the offline service worker at build time.
 

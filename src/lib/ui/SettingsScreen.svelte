@@ -4,6 +4,7 @@
   import { LANGS, i18n, locale, setLang, t } from '../i18n/index.svelte.js';
   import { SHELLS, look, setShell } from './look.svelte.js';
   import { LIGHT, PRESET_COLORS, linkName } from './shared.js';
+  import BackupsPanel from './BackupsPanel.svelte';
   import { studio } from './studio.svelte.js';
 
   const d = $derived(studio.draft);
@@ -114,6 +115,8 @@
       </div>
     </div>
   </div>
+
+  <BackupsPanel />
 
   <div class="setting">
     <div class="s-label">
