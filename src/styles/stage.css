@@ -1,0 +1,293 @@
+/* ---------- Stage: the desk, the mouse on it, lit by its own LED ---------- */
+.stage { position: absolute; inset: 0; overflow: hidden; }
+.stage-in { position: relative; height: 100%; overflow: hidden; }
+.desk { position: absolute; inset: 0; background:
+  radial-gradient(56% 64% at 50% 44%, var(--spot), transparent 72%),
+  radial-gradient(130% 120% at 50% 40%, transparent 55%, var(--vignette)),
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E"); }
+.glow { position: absolute; inset: 0; pointer-events: none; opacity: var(--bright); transition: opacity 600ms ease-out; }
+.stage[data-light="off"] .glow { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .stage[data-light="breathe"] .glow { animation: breathe var(--period) ease-in-out infinite; }
+  :root.neon { animation: neon var(--period) linear infinite; }
+}
+@keyframes breathe { 0%, 100% { opacity: calc(var(--bright) * .16); } 50% { opacity: var(--bright); } }
+@keyframes neon { 0% { --led: #ff0000; } 17% { --led: #ffff00; } 33% { --led: #00ff00; } 50% { --led: #00ffff; } 67% { --led: #0000ff; } 83% { --led: #ff00ff; } 100% { --led: #ff0000; } }
+.pool { position: absolute; border-radius: 50%; opacity: var(--pool);
+  background: radial-gradient(closest-side in oklab, color-mix(in oklab, var(--led) var(--pool-a), transparent), color-mix(in oklab, var(--led) var(--pool-b), transparent) 46%, transparent); }
+/* Turned over, the LED faces the desk and its light spills out round the shell. */
+.halo { position: absolute; opacity: calc(var(--halo) * .75); }
+.halo svg, .shadow svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.halo path { fill: var(--led); }
+.halo svg { filter: blur(28px); scale: 1.06; }
+.shadow { position: absolute; pointer-events: none; opacity: calc(var(--shadow-o) - var(--lift, 0) * .3); translate: 0 calc(6px + var(--lift, 0) * 16px); scale: calc(.98 + var(--lift, 0) * .06) 1; }
+.shadow svg { filter: blur(calc(10px + var(--lift, 0) * 14px)); }
+.shadow path { fill: #000; }
+/* It can be picked up and looked round, from its body or anywhere on the desk; on a touch screen an upright drag
+   still scrolls the page. While held, the hand closes. */
+.mouse { position: absolute; z-index: 2; touch-action: pan-y; cursor: grab; }
+.app:not(.testing) .stage-in { cursor: grab; touch-action: pan-y; }
+.stage.held, .stage.held * { cursor: grabbing !important; }
+.face { position: absolute; inset: 0; transition: opacity 150ms ease-out; }
+.face[hidden] { display: block; visibility: hidden; opacity: 0; }
+.mouse.out .face { visibility: hidden; }
+.x11 { display: block; width: 100%; height: 100%; overflow: visible; }
+.turncv { position: absolute; z-index: 3; pointer-events: none; visibility: hidden; }
+.turncv.on { visibility: visible; }
+.x11 .led-chip { fill: var(--led); }
+.x11 .led-glow { fill: var(--led); opacity: calc(.95 * var(--bright)); transition: opacity 400ms ease-out; }
+.x11 .led-core { transition: opacity 400ms ease-out; }
+.stage[data-light="off"] .x11 .led-chip { fill: #2c2c31; }
+.stage[data-light="off"] .x11 :is(.led-glow, .led-core) { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .stage[data-light="breathe"] .x11 :is(.led-glow, .led-chip, .led-core) { animation: breathe var(--period) ease-in-out infinite; }
+  .x11 .led-chip.flash { animation: flash 700ms ease-out; }
+}
+@keyframes flash { 0% { filter: brightness(2.4); } 100% { filter: none; } }
+.x11 .part { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: filter 150ms ease-out; }
+@media (hover: hover) { .app:not(.testing) .x11 .part:hover { filter: brightness(1.08); } }
+.x11 .part.down { filter: brightness(.8); }
+@media (prefers-reduced-motion: no-preference) { .x11 .part { transition: transform 110ms ease-out, filter 150ms ease-out; } .x11 .part.down { transform: translateY(4px) scale(.994); } }
+.x11 .hit { fill: transparent; cursor: pointer; }
+.x11 .outline, .x11 .ohalo { fill: none; opacity: 0; transition: opacity 200ms ease-out; pointer-events: none; }
+.x11 .outline { stroke: var(--acc); stroke-width: 2px; vector-effect: non-scaling-stroke; }
+.x11 .ohalo { stroke: rgb(0 0 0 / .55); stroke-width: 6px; vector-effect: non-scaling-stroke; }
+.x11 .hl { opacity: .5; }
+.x11 .on { opacity: 1; }
+.x11 .mled-glow { opacity: 0; }
+
+/* The drawing answers the mouse: a button underneath goes down and rings, the power switch's knob slides to its
+   stop, and the Mode switch's lights play the manual's patterns. */
+.x11 .knob { transition: transform 480ms cubic-bezier(.34, 1.45, .5, 1); }
+.x11 .ring { stroke: var(--level); stroke-width: 3; opacity: 0; transform-box: fill-box; transform-origin: center; pointer-events: none; }
+.x11 .ring.ping { animation: ping 720ms ease-out; }
+@keyframes ping { 0% { opacity: .95; scale: .82; } 100% { opacity: 0; scale: 1.7; } }
+.face[data-cue="g24"] { --cue: #ff3b30; } .face[data-cue="bt1"] { --cue: #34c759; } .face[data-cue="bt2"] { --cue: #4a8bff; }
+.face[data-cue="bt2"] .mleds > :nth-child(-n+2), .face[data-cue="bt1"] .mleds > :is(:nth-child(3), :nth-child(4)), .face[data-cue="g24"] .mleds > :nth-child(n+5) {
+  fill: var(--cue); animation: cue 2.2s ease-out both; }
+@keyframes cue { 0% { opacity: 0; } 8%, 72% { opacity: 1; } 100% { opacity: 0; } }
+.face[data-pattern] .mled { fill: var(--mc); }
+.face[data-pattern] .mled-glow { fill: var(--mc); opacity: .85; }
+.face[data-pattern="red-fast"] { --mc: #ff3b30; } .face[data-pattern="green-fast"] { --mc: #34c759; } .face[data-pattern="blue-fast"] { --mc: #4a8bff; }
+.face[data-pattern="green-slow"] { --mc: #34c759; } .face[data-pattern="red-once"] { --mc: #ff3b30; }
+@media (prefers-reduced-motion: no-preference) {
+  .face[data-pattern$="-fast"] :is(.mled, .mled-glow) { animation: blink .34s steps(1, end) infinite; }
+  .face[data-pattern$="-slow"] :is(.mled, .mled-glow) { animation: blink 1.4s steps(1, end) infinite; }
+  .face[data-pattern$="-once"] :is(.mled, .mled-glow) { animation: once 3.2s steps(1, end) infinite; }
+}
+@keyframes blink { 50% { fill: #2c2c31; opacity: .1; } }
+@keyframes once { 0% { fill: #2c2c31; opacity: .1; } 25% { fill: var(--mc); opacity: 1; } 56% { fill: #2c2c31; opacity: .1; } }
+
+/* A new shell: the old one is wiped off from the left, a glint running along the wipe's edge. Both follow one
+   animated position, --wipe, so the light stays on the edge all the way across. */
+@property --wipe { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+.face.ghost { z-index: 1; pointer-events: none;
+  -webkit-mask: linear-gradient(105deg, transparent calc(var(--wipe) - 6%), #000 calc(var(--wipe) + 6%));
+  mask: linear-gradient(105deg, transparent calc(var(--wipe) - 6%), #000 calc(var(--wipe) + 6%));
+  animation: shell-wipe 1000ms cubic-bezier(.6, 0, .3, 1) both; }
+.shellglint { position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(105deg, transparent calc(var(--wipe) - 10%), rgb(255 255 255 / .42) var(--wipe), transparent calc(var(--wipe) + 10%));
+  -webkit-mask: var(--body) center / 100% 100% no-repeat; mask: var(--body) center / 100% 100% no-repeat; mix-blend-mode: screen;
+  animation: shell-wipe 1000ms cubic-bezier(.6, 0, .3, 1) both; }
+@keyframes shell-wipe { from { --wipe: -20%; } to { --wipe: 120%; } }
+
+/* ---------- Callouts: what each part does, like the callouts of a manual, joined to the part by a leader ---------- */
+.lines { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; overflow: visible; transition: opacity 200ms ease-out; }
+.lines .ln { fill: none; stroke: var(--line); stroke-width: 1; opacity: .75; transition: stroke 150ms ease-out, opacity 200ms ease-out; }
+.lines .halo2 { fill: none; stroke: var(--line-halo); stroke-width: 3; transition: opacity 200ms ease-out; }
+.lines .dot { fill: var(--soft); stroke: var(--line-halo); stroke-width: 2; transition: fill 150ms ease-out, opacity 200ms ease-out; }
+.lines .hl.ln { stroke: var(--soft); opacity: 1; }
+.lines .on.ln { stroke: var(--acc); stroke-width: 1.5; opacity: 1; }
+.lines .on.dot { fill: var(--acc); }
+.lines .dim { opacity: .18; }
+.callouts { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
+.callout { position: absolute; top: 0; pointer-events: auto; display: grid; max-width: 236px; padding: 2px 0; border: 0; background: transparent; color: var(--text); text-align: start; cursor: pointer;
+  transition: opacity 200ms ease-out; }
+.callout.l { text-align: end; justify-items: end; }
+/* Two faces in one place: what the part does, and in Test its counter. Each turns over a few hundredths of a second
+   after the one before. */
+.callout .face2 { grid-area: 1 / 1; display: grid; align-content: start; transition: opacity 220ms ease-out calc(var(--i, 0) * 35ms), translate 420ms var(--ease) calc(var(--i, 0) * 35ms); }
+.callout.l .face2 { justify-items: end; }
+.callout small { color: var(--muted); font-size: 11.5px; line-height: 15px; letter-spacing: .01em; }
+.callout .v { display: inline-flex; align-items: center; gap: 7px; font-size: 16.5px; line-height: 23px; white-space: nowrap; transition: color 150ms ease-out; }
+.callout .sub { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0 10px; color: var(--muted); font-size: 12px; line-height: 16px; white-space: nowrap; }
+.callout.l .sub { justify-content: flex-end; }
+@media (hover: hover) { .app:not(.testing) .callout:hover .v { color: var(--acc); } }
+.app:not(.testing) .callout.hl .v { color: var(--acc); }
+.callout .tst { opacity: 0; translate: 0 10px; }
+.app.testing .callout { cursor: default; }
+.app.testing .callout .cfg { opacity: 0; translate: 0 -10px; }
+.app.testing .callout .tst { opacity: 1; translate: 0 0; }
+.callouts.dim-l .callout.l, .callouts.dim-r .callout.r { opacity: 0; pointer-events: none; }
+.stage.turning .callouts, .stage.turning .lines { opacity: 0; transition-duration: 120ms; }
+/* While it rocks by itself the callouts stay; only their leaders step aside. */
+.stage.peeking .lines { opacity: 0; }
+
+/* ---------- The ring round the mouse's tail: it can be picked up and turned ----------
+   Square dots like the icons' pixels, larger and brighter on the near side; a light in the level's colour runs from
+   dot to dot like a chain of LEDs, and the pixel arrows nudge the way it turns while the pointer is on the mouse.
+   Drawn under the mouse, so the mouse hides the part that passes behind it. */
+.orbit { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; overflow: visible; opacity: .62; transition: opacity 400ms ease-out; }
+.orbit .ring { fill: none; stroke: none; }
+.orbit .leds { --lo: var(--line); --hi: color-mix(in oklab, var(--level) 70%, white); filter: drop-shadow(0 0 3px color-mix(in oklab, var(--level) 55%, transparent)); }
+.orbit .led { fill: var(--lo); }
+.orbit .chev rect { fill: var(--soft); }
+:root[data-theme="light"] .orbit .leds { --hi: color-mix(in oklab, var(--level) 85%, black); filter: none; }
+.stage-in:has(.mouse:hover) .orbit, .stage.held .orbit, .stage.peeking .orbit { opacity: 1; }
+.stage-in:has(.mouse:hover) .orbit .leds, .stage.held .orbit .leds, .stage.peeking .orbit .leds { --lo: var(--soft); }
+@media (prefers-reduced-motion: no-preference) {
+  .orbit .led { animation: led-chase 5.2s linear infinite; animation-delay: calc(var(--i) / var(--n) * 5.2s); }
+  .stage-in:has(.mouse:hover) .orbit .cu { animation: nudge-up 640ms ease-in-out infinite alternate; }
+  .stage-in:has(.mouse:hover) .orbit .cd { animation: nudge-down 640ms ease-in-out infinite alternate; }
+}
+@keyframes led-chase { 0%, 2% { fill: var(--hi); } 16% { fill: var(--lo); } }
+@keyframes nudge-up { to { translate: 0 -2px; } }
+@keyframes nudge-down { to { translate: 0 2px; } }
+/* Never in Test, not even with the pointer on the mouse: the lab is for trying the buttons, not for turning it. */
+.app.testing .orbit { opacity: 0 !important; visibility: hidden; transition: opacity 260ms ease-out, visibility 0s 260ms; }
+.stage:has(.card.on) .orbit { opacity: .22; }
+/* The turn-over control is for the keyboard: unseen until it has focus (F turns it too). */
+.turnbtn { position: absolute; z-index: 6; display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 0; border-radius: 8px; cursor: pointer;
+  background: color-mix(in oklab, var(--well) 72%, transparent); box-shadow: var(--ring); color: var(--soft); backdrop-filter: blur(8px);
+  transition: color 150ms ease-out, box-shadow 150ms ease-out, scale 150ms ease-out, opacity 220ms ease-out; }
+.turnbtn:not(:focus-visible) { opacity: 0 !important; pointer-events: none; }
+.turnbtn svg.i { width: 18px; height: 18px; transition: rotate 760ms var(--ease); }
+.stage[data-face="under"] .turnbtn svg.i { rotate: 180deg; }
+.turnbtn:active { scale: .94; }
+.app.testing .turnbtn, .stage.turning .turnbtn { opacity: 0; pointer-events: none; }
+
+/* ---------- Test: the bench ----------
+   A cutting-mat grid opens out from the mouse and folds back into it; each pointer report leaves a dot. */
+@property --reveal { syntax: '<length>'; inherits: false; initial-value: 0px; }
+.labgrid { position: absolute; inset: 0; pointer-events: none; --reveal: 0px; opacity: 0;
+  background: linear-gradient(var(--hair) 1px, transparent 1px) 0 0 / 28px 28px, linear-gradient(90deg, var(--hair) 1px, transparent 1px) 0 0 / 28px 28px;
+  -webkit-mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 45%), #000 var(--reveal), transparent calc(var(--reveal) + 180px));
+  mask: radial-gradient(circle at var(--cx, 50%) var(--cy, 45%), #000 var(--reveal), transparent calc(var(--reveal) + 180px));
+  transition: --reveal 620ms var(--ease), opacity 260ms ease-out 200ms; }
+.app.testing .labgrid { --reveal: 1800px; opacity: 1; transition: --reveal 1100ms cubic-bezier(.3, 0, .2, 1) 80ms, opacity 200ms ease-out; }
+@media (prefers-reduced-motion: reduce) { .labgrid { transition: opacity 200ms ease-out; } .callout .face2 { transition-duration: 1ms !important; } }
+.trail { position: absolute; inset: 0; z-index: 7; pointer-events: none; display: none; }
+.app.testing .trail { display: block; }
+
+/* ---------- The card: the part you touched, beside the mouse ---------- */
+.card { position: absolute; z-index: 20; top: 0; left: 0; width: 360px; max-height: calc(100% - 24px); overflow: auto; overscroll-behavior: contain; padding: 16px 20px 20px; border-radius: var(--r);
+  background: var(--card); border: 1px solid transparent; box-shadow: var(--ring), 0 24px 60px oklch(0 0 0 / .45); scrollbar-width: thin; scrollbar-color: var(--control) transparent;
+  opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 150ms ease-out, visibility 0s 150ms; }
+.card.on { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 300ms ease-out, visibility 0s; }
+@media (prefers-reduced-motion: no-preference) {
+  .card { translate: 0 8px; filter: blur(4px); transition-property: opacity, translate, filter, visibility; }
+  .card.on { translate: 0 0; filter: blur(0); }
+}
+.ehead { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.ehead .ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--r); background: var(--raised); color: var(--acc); flex: none; }
+.ehead .ic .lvdot { width: 14px; height: 7px; border-radius: 2px; background: var(--c); box-shadow: 0 0 10px 1px color-mix(in oklab, var(--c) 55%, transparent); }
+.ehead h3 { font-size: 19px; line-height: 1.25; }
+.ehead p { color: var(--muted); font-size: 12px; line-height: 17px; text-wrap: pretty; }
+.ehead p b { color: var(--text); font-weight: 600; }
+.ehead .x { margin-inline-start: auto; align-self: flex-start; margin-top: -4px; margin-inline-end: -8px; }
+.lede { color: var(--muted); font-size: 12.5px; line-height: 18px; margin: -4px 0 12px; text-wrap: pretty; }
+.lede b { color: var(--text); font-weight: 600; }
+.grp { margin: 16px 0 7px; color: var(--muted); font-size: 12px; }
+.grp.first { margin-top: 4px; }
+.seg.inset { margin-inline-start: -12px; }
+.seg.inset.tight { margin-inline-start: -9px; }
+.warn { margin: 0 0 10px; color: var(--negative); font-size: 12px; line-height: 17px; }
+.fine { color: var(--muted); font-size: 12px; line-height: 17px; margin-top: 10px; text-wrap: pretty; }
+.fine .link { font-size: 12px; }
+.efoot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.efoot.start { justify-content: flex-start; }
+.modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mini { width: 18px; height: 6px; border-radius: 2px; background: var(--c); flex: none; }
+.mini.off { background: #2c2c31; }
+@media (prefers-reduced-motion: no-preference) {
+  .mini.breathe { animation: mini-breathe 2.4s ease-in-out infinite; }
+  .mini.neon { animation: mini-neon 4s linear infinite; }
+  .mini.neon.breathe { animation: mini-neon 4s linear infinite, mini-breathe 2.4s ease-in-out infinite; }
+}
+@keyframes mini-breathe { 50% { opacity: .15; } }
+@keyframes mini-neon { 0%, 100% { background: #ff0000; } 17% { background: #ffff00; } 33% { background: #00ff00; } 50% { background: #00ffff; } 67% { background: #0000ff; } 83% { background: #ff00ff; } }
+.meter { display: flex; align-items: flex-end; gap: 3px; }
+.meter button { width: 9px; border: 0; border-radius: 1px; background: var(--control); cursor: pointer; padding: 0; transition: background-color 150ms ease-out; }
+.meter button.on { background: var(--acc); }
+.meter output { width: 3ch; text-align: end; margin-inline-start: 8px; align-self: center; font-size: 14px; }
+.meter.off button { cursor: default; opacity: .3; }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sw { width: 28px; height: 28px; border-radius: var(--r); border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--hair-hover); background: var(--c); cursor: pointer; padding: 0; transition: box-shadow 150ms ease-out; }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 1.5px var(--text); }
+.sw.custom { position: relative; overflow: hidden; background: conic-gradient(in oklch, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); }
+.sw.custom input { position: absolute; inset: -6px; opacity: 0; cursor: pointer; }
+.capture { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 68px; margin-top: 4px; border-radius: var(--r); border: 1px dashed var(--control); background: var(--well); }
+.capture.done { border-style: solid; border-color: var(--acc); }
+.capture .wait, .capture .plus { color: var(--muted); }
+.mbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mbar .count { margin-inline-start: auto; color: var(--muted); font-size: 12px; }
+.recdot { width: 9px; height: 9px; border-radius: 50%; background: var(--negative); }
+.btn.rec.on { border-color: var(--negative); }
+@media (prefers-reduced-motion: no-preference) { .btn.rec.on .recdot { animation: rec 1s steps(1, end) infinite; } }
+@keyframes rec { 50% { opacity: .2; } }
+/* The macro as a piano roll: one lane per key, a bar for each press, as long as it was held. */
+.roll { position: relative; margin-top: 12px; padding: 12px 12px 6px; border-radius: var(--r); background: var(--well); border: 1px solid var(--rule); }
+.roll .rows { display: grid; gap: 6px; }
+.roll .rrow { display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 8px; height: 20px; }
+.roll .rrow > span { color: var(--soft); font-size: 12px; text-align: end; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.roll .lane { position: relative; height: 100%; border-radius: 2px; background: var(--hair); }
+.roll .bar { position: absolute; top: 3px; bottom: 3px; min-width: 4px; border-radius: 1px; background: var(--acc); opacity: .8; transition: opacity 120ms ease-out, box-shadow 150ms ease-out; }
+.roll .bar.lit { opacity: 1; box-shadow: 0 0 12px 1px color-mix(in oklab, var(--acc) 70%, transparent); }
+.roll .axis { position: relative; height: 16px; margin: 6px 0 0 52px; color: var(--muted); font-size: 10.5px; }
+.roll .axis span { position: absolute; translate: -50% 0; white-space: nowrap; }
+.roll .axis span:first-child { translate: 0 0; }
+.roll .head { position: absolute; top: 8px; bottom: 24px; width: 1px; background: var(--text); opacity: 0; left: calc(64px + var(--f, 0) * (100% - 76px)); }
+.roll .empty { color: var(--muted); font-size: 12px; line-height: 18px; padding: 14px 8px 18px; text-align: center; text-wrap: pretty; }
+.guide { display: grid; gap: 4px; margin-top: 6px; }
+.grow { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; padding: 9px 10px; margin-inline: -10px; border: 0; border-radius: var(--r); background: transparent; text-align: start; cursor: pointer; transition: background-color 150ms ease-out; }
+.grow.lit { background: var(--raised); }
+.grow .dots { display: flex; gap: 4px; padding-top: 5px; }
+.gdot { width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px 1px color-mix(in oklab, var(--c) 50%, transparent); }
+.grow b { font-weight: 600; }
+.grow small { display: block; color: var(--muted); font-size: 12px; line-height: 17px; text-wrap: pretty; }
+.spark { display: block; width: 100%; height: 78px; margin-top: 10px; overflow: visible; }
+.spark .line { fill: none; stroke: var(--acc); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.spark .area { fill: url(#sparkfill); }
+.spark .grid { stroke: var(--hair); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sparkx { display: flex; justify-content: space-between; color: var(--muted); font-size: 10.5px; margin-top: 4px; }
+.positions { display: grid; margin-top: 4px; }
+.positions div { display: flex; justify-content: space-between; padding: 9px 0; color: var(--muted); border-top: 1px dashed var(--rule); }
+.positions div:first-child { border-top: 0; }
+.positions .now { color: var(--text); }
+.positions .now span:last-child { color: var(--acc); }
+.rowline .here { color: var(--acc); font-weight: 600; }
+/* The battery, on a display of its own: 2 px dots on a 4 px grid. */
+.dot.big { font-size: 40px; line-height: 44px; font-weight: 367; }
+
+/* ---------- Narrow screens: the mouse on top, its parts as tiles, the card as a sheet ---------- */
+.plist { display: none; }
+@media (max-width: 899px) {
+  .stage { position: relative; height: auto; overflow: visible; }
+  .stage-in { height: var(--sh, 440px); }
+  .plist { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; padding: 6px 14px 18px; }
+  .prt { display: grid; grid-template-columns: 34px minmax(0, 1fr) 16px; gap: 12px; align-items: center; padding: 12px 12px 12px 10px; border: 1px solid transparent; border-radius: var(--r); background: var(--surface); box-shadow: var(--ring); text-align: start; cursor: pointer; }
+  .prt .ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--r); background: var(--raised); color: var(--acc); }
+  .prt small { display: block; color: var(--muted); font-size: 12px; }
+  .prt b { display: block; font-size: 15.5px; line-height: 1.35; }
+  .prt .sub { display: block; color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prt > svg.i { color: var(--muted); }
+  .card { position: fixed; left: 0 !important; right: 0; top: auto !important; bottom: 0; width: auto !important; max-height: 84svh !important; border-radius: 8px 8px 0 0; z-index: 96; padding-top: 22px; }
+  .card::before { content: ""; position: absolute; top: 8px; left: 50%; translate: -50% 0; width: 36px; height: 4px; border-radius: 2px; background: var(--control); }
+  @media (prefers-reduced-motion: no-preference) { .card { translate: 0 40px; filter: none; } .card.on { translate: 0 0; } }
+}
+/* A tablet keeps the desktop's callouts round the mouse. */
+@media (min-width: 740px) and (max-width: 899px) {
+  .plist { display: none; }
+  .callout { max-width: 196px; }
+  .callout .v { font-size: 15.5px; }
+}
+@media (max-width: 739px) {
+  .callouts, .lines { display: none; }
+  .plist { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 14px 14px 22px; }
+  .app:has(.slot:not(:empty)) .plist { padding-bottom: 96px; }
+  .prt { grid-template-columns: 1fr; gap: 8px; align-content: start; padding: 12px; }
+  .prt .ic { width: 30px; height: 30px; }
+  .prt > svg.i { display: none; }
+  .prt b { font-size: 14.5px; line-height: 1.3; }
+  .prt .sub { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+}

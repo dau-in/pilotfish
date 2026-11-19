@@ -1,10 +1,8 @@
 // Labels, limits and helpers every screen shares. Words come from i18n; this file only says which ones.
 import { t } from '../i18n/index.svelte.js';
 
-export { clock, fmt } from '../i18n/index.svelte.js';
-
 export const NATIVE_MAX = 12000; // PAW3311; above this the firmware asks for half and doubles it
-export const PRESET_COLORS = ['#ff0000', '#ff4000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#ffffff'];
+export const PRESET_COLORS = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff', '#ff4000', '#ffffff'];
 
 export const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -15,19 +13,8 @@ export function snapDpi(dpi) {
   if (v <= NATIVE_MAX) return Math.round(v / 100) * 100;
   return Math.min(22000, Math.round(v / 200) * 200);
 }
-export const dpiStep = v => (v >= NATIVE_MAX ? 200 : v >= 10000 ? 100 : 50);
-export const isDoubled = v => v > NATIVE_MAX;
-
-/* ---------- Connection ---------- */
-export const linkName = kind => (kind ? t(`link.${kind}`) : null);
-export const LOW_BATTERY = 20;
-export function batteryText(b) {
-  if (!b) return null;
-  if (b.state === 'charging') return t('battery.charging', b);
-  if (b.state === 'full') return t('battery.full');
-  return t('battery.level', b);
-}
-export const buttonName = id => t(`button.${id}`);
+// One step up or down from v: 50 up to 10,000, then 100 up to the sensor's limit, then 200.
+export const stepDpi = (v, dir) => snapDpi(v + dir * (dir > 0 ? (v < 10000 ? 50 : v < NATIVE_MAX ? 100 : 200) : (v <= 10000 ? 50 : v <= NATIVE_MAX ? 100 : 200)));
 
 /* ---------- Buttons ---------- */
 export const FACTORY = { left: 2, right: 3, wheel: 4, forward: 6, back: 5, dpi: 13, 'wheel-up': 10, 'wheel-down': 9 };
@@ -83,7 +70,27 @@ export function actionLabel(raw) {
   const plain = t(`act.${raw[0]}`);
   return plain === `act.${raw[0]}` ? t('act.function', { fn: raw[0] }) : plain;
 }
-export const isListed = raw => ACTION_LIST.some(a => same(a.raw, raw));
+export const groupOf = raw => ACTIONS.find(([, items]) => items.some(a => same(a.raw, raw)))?.[0] ?? null;
+
+// The icon beside each action, by function code or shortcut name.
+const ACTION_ICON = {
+  2: 'mouse', 3: 'mouse', 4: 'mouse', 5: 'arrow-left', 6: 'arrow-right', 7: 'check-double', 8: 'zap', 9: 'arrow-down', 10: 'arrow-up',
+  11: 'chevron-left', 12: 'chevron-right', 13: 'repeat', 14: 'chevron-up', 15: 'chevron-down', 22: 'prev', 23: 'next', 24: 'play',
+  26: 'volume-x', 27: 'volume-plus', 28: 'volume-minus', 32: 'arrow-right', 33: 'arrow-left', 36: 'reload', 43: 'battery', 1: 'close',
+  copy: 'copy', paste: 'clipboard', cut: 'cut', undo: 'undo', switchWindow: 'layout', desktop: 'monitor', snip: 'image', lock: 'lock',
+};
+export function iconOf(raw) {
+  if (raw[0] === 18) return 'script-text';
+  const known = ACTION_LIST.find(a => same(a.raw, raw));
+  if (known) return ACTION_ICON[known.key.slice(4)] ?? 'mouse';
+  return raw[0] === 17 ? 'keyboard' : 'mouse';
+}
+
+/* ---------- The look: what the LED shows now ---------- */
+// The light mode's colour comes from the light itself (Steady, Breathing) or from the DPI level in use.
+export const ownColor = mode => mode === 1 || mode === 2;
+export const ledColor = d => (!d ? '#2c2c31' : d.lighting.mode === 0 ? '#2c2c31' : ownColor(d.lighting.mode) ? d.lighting.color : d.levels[d.activeLevel - 1].color);
+export const lightKind = mode => (mode === 0 ? 'off' : [2, 4, 6].includes(mode) ? 'breathe' : 'steady');
 
 /* ---------- Light ---------- */
 // In the official app's order; the firmware stores the position. Which controls each mode uses (names and notes

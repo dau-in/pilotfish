@@ -23,6 +23,7 @@ export const mouse = $state({
   canChangePolling: true,
   maxMacroSteps: 0,
   asleep: false,  // over the receiver: no heartbeat lately, so nothing is sent until it wakes
+  beatAt: 0,      // the last heartbeat, so the screen can pulse with it
 });
 
 let link = null;
@@ -44,6 +45,7 @@ function onBeat() {
   const now = Date.now();
   if (beat.last && now - beat.last > BEAT_GAP_MS) Object.assign(beat, { streak: 0, needed: 2 });
   Object.assign(beat, { last: now, streak: beat.streak + 1, none: false });
+  mouse.beatAt = now;
   mouse.asleep = !linked();
   if (!mouse.asleep && refreshWhenAwake) { refreshWhenAwake = false; scheduleRefresh(); }
 }
@@ -65,7 +67,7 @@ function reset(status = 'idle', error = null) {
   clearInterval(beat.watch);
   clearTimeout(refreshTimer);
   refreshWhenAwake = false;
-  Object.assign(mouse, { status, kind: null, version: null, profile: null, battery: null, readAt: null, error, asleep: false });
+  Object.assign(mouse, { status, kind: null, version: null, profile: null, battery: null, readAt: null, error, asleep: false, beatAt: 0 });
 }
 
 async function refresh() {

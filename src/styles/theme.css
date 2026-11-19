@@ -1,0 +1,67 @@
+/* ---------- Faces ----------
+   Instrument Sans for every word; Doto, a dot-matrix face, for the figures a device would show on its own display.
+   The credits card has two more, cut with fontTools to the characters it shows (SIL OFL, licences beside them): the
+   script D of the signature from Noto Sans Math, and the motto in Yuji Syuku. */
+@font-face { font-family: "Pilotfish Script"; src: url("../assets/fonts/noto-sans-math-d.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "Pilotfish Motto"; src: url("../assets/fonts/yuji-syuku-motto.woff2") format("woff2"); font-display: swap; }
+
+@property --level { syntax: '<color>'; inherits: true; initial-value: #ff0000; }
+@property --led { syntax: '<color>'; inherits: true; initial-value: #ff0000; }
+
+/* ---------- Themes. Carbón: a warm, nearly neutral black. Papel: warm off-white. Every surface is a step of
+   lightness on one hue, so the only colour in the interface is the LED's. ---------- */
+:root { --h: 70; --c: .006;
+  --ground: oklch(.168 var(--c) var(--h)); --surface: oklch(.198 calc(var(--c) * 1.1) var(--h)); --card: oklch(.226 calc(var(--c) * 1.15) var(--h));
+  --raised: oklch(.27 calc(var(--c) * 1.2) var(--h)); --raised2: oklch(.31 calc(var(--c) * 1.2) var(--h)); --border: oklch(.285 var(--c) var(--h));
+  --rule: oklch(.252 var(--c) var(--h)); --control: oklch(.39 var(--c) var(--h)); --line: oklch(.5 calc(var(--c) * 1.2) var(--h));
+  --text: oklch(.972 calc(var(--c) * .3) var(--h)); --soft: oklch(.875 calc(var(--c) * .5) var(--h)); --muted: oklch(.715 var(--c) var(--h));
+  --well: oklch(.14 var(--c) var(--h)); --hair: oklch(1 0 0 / .08); --hair-hover: oklch(1 0 0 / .15);
+  --spot: oklch(1 0 0 / .045); --vignette: oklch(0 0 0 / .34); --shadow-o: .6; --pool-a: 28%; --pool-b: 10%; --line-halo: oklch(0 0 0 / .38);
+  --acc-mix: white; --acc-amt: 68%; --ink-2: 214 214 217; --grid-a: .05; --dock-shadow: 0 24px 60px oklch(0 0 0 / .32);
+  color-scheme: dark; }
+:root[data-theme="light"] { --h: 75; --c: .011;
+  --ground: oklch(.952 var(--c) var(--h)); --surface: oklch(.972 calc(var(--c) * .8) var(--h)); --card: oklch(.994 calc(var(--c) * .4) var(--h));
+  --raised: oklch(.925 var(--c) var(--h)); --raised2: oklch(.895 var(--c) var(--h)); --border: oklch(.885 var(--c) var(--h));
+  --rule: oklch(.912 var(--c) var(--h)); --control: oklch(.8 var(--c) var(--h)); --line: oklch(.64 calc(var(--c) * 1.2) var(--h));
+  --text: oklch(.21 calc(var(--c) * 1.4) var(--h)); --soft: oklch(.34 var(--c) var(--h)); --muted: oklch(.5 var(--c) var(--h));
+  --well: oklch(.935 var(--c) var(--h)); --hair: oklch(0 0 0 / .085); --hair-hover: oklch(0 0 0 / .16);
+  --spot: oklch(1 0 0 / .7); --vignette: oklch(.3 .02 var(--h) / .1); --shadow-o: .3; --pool-a: 24%; --pool-b: 8%; --line-halo: oklch(1 0 0 / .7);
+  --acc-mix: black; --acc-amt: 78%; --ink-2: 60 58 54; --grid-a: .07; --dock-shadow: 0 18px 44px oklch(.3 .02 60 / .12);
+  color-scheme: light; }
+:root {
+  --negative: oklch(.66 .18 22);
+  /* --level is the colour of the DPI level in use and drives every accent; --led is what the LED shows now. */
+  --level: #ff0000; --led: #ff0000; --bright: .9; --period: 3s; --pool: 1; --halo: 0;
+  --acc: color-mix(in oklab, var(--level) var(--acc-amt), var(--acc-mix));
+  --ring: 0 0 0 1px var(--hair);
+  --ring-hover: 0 0 0 1px var(--hair-hover);
+  --ease: cubic-bezier(.2, 0, 0, 1);
+  --head: 64px;
+  --r: 5px;
+  --f-text: "Instrument Sans Variable", system-ui, sans-serif;
+  --f-dot: "Doto Variable", ui-monospace, monospace;
+  transition: --level 700ms ease-out, --led 700ms ease-out;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Type ----------
+   Titles in the text face, a step bolder. Figures inside sentences and buttons keep the text face with tabular
+   digits. The device's own readouts are in Doto, and only at 10 and 20 px: Doto draws every figure on a grid of
+   square dots a tenth of an em apart, so only there does each dot land on whole pixels and read as crisp as the
+   pixel icons beside it. Readouts are written as a device writes them, without a thousands separator. */
+.disp { font-family: var(--f-text); font-weight: 650; letter-spacing: -0.015em; }
+.fig { font-family: var(--f-text); font-variant-numeric: tabular-nums; }
+.dot { font-family: var(--f-dot); font-weight: 900; font-variant-numeric: normal; letter-spacing: 0; font-size: 20px; line-height: 24px; }
+.dot.s10 { font-size: 10px; line-height: 10px; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--ground); color: var(--text); font: 400 13px/1.5 var(--f-text); overflow-x: hidden; transition: background-color 300ms ease-out, color 300ms ease-out; }
+button, input, select { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+h1, h2, h3, p { margin: 0; }
+svg.i { width: 16px; height: 16px; flex: none; display: block; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+kbd { display: inline-grid; place-items: center; min-width: 30px; height: 30px; padding: 0 9px; border-radius: var(--r); background: var(--well); box-shadow: inset 0 0 0 1px var(--control), inset 0 -2px 0 var(--control); font: 600 13px/1 var(--f-text); color: var(--text); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.bad { color: var(--negative) !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0s !important; } }

@@ -1,0 +1,234 @@
+/* ---------- The dock: the DPI levels, or the click log in Test ----------
+   Three columns on a desktop: the title and readout on the left, the instrument in the middle, and on the right a
+   column as wide as the left one, so the instrument's centre is the dock's centre, the mouse's axis above it. The
+   faders and the dial share the dock's grid, their key or legend in the right-hand column. Clipped sideways: a level
+   at either end has a grip wider than its track, and it must not widen the page. */
+.band { position: absolute; z-index: 8; left: 50%; bottom: 16px; translate: -50% 0; width: min(1200px, calc(100% - 32px)); overflow-x: clip;
+  --side: 196px; --gap: 28px; display: grid; grid-template-columns: minmax(var(--side), 1fr) minmax(0, 760px) minmax(var(--side), 1fr); column-gap: var(--gap); align-items: center;
+  padding: 16px 28px 18px; border-radius: 8px; background: color-mix(in oklab, var(--surface) 80%, transparent); backdrop-filter: blur(16px) saturate(1.15);
+  box-shadow: var(--ring), var(--dock-shadow); }
+.band[data-dpi="dial"] { --side: 236px; }
+.bleft { display: grid; gap: 12px; align-content: center; }
+.band h2 { font-size: 16px; line-height: 1.3; }
+.band .sub { color: var(--muted); font-size: 12px; line-height: 17px; margin-top: 2px; text-wrap: pretty; }
+.inst { position: relative; width: 100%; }
+[data-lv]:not(.chg) > .modd { display: none; }
+
+/* The DPI dock and the click log share one place and cross-fade; the dock keeps the taller one's height. */
+.band > .bleft { grid-column: 1; grid-row: 1; }
+.band > .inst { grid-row: 1; }
+.band > :is(.cfg, .tst) { transition: opacity 260ms ease-out 120ms, translate 460ms var(--ease) 120ms, visibility 0s; }
+.app:not(.testing) .band > .tst, .app.testing .band > .cfg { opacity: 0; translate: 0 10px; visibility: hidden; pointer-events: none;
+  transition: opacity 150ms ease-out, translate 300ms var(--ease), visibility 0s 300ms; }
+@media (prefers-reduced-motion: reduce) { .band > * { transition-duration: 1ms !important; } }
+
+/* ---------- The level in use, on a display of dots ----------
+   Drawn dot by dot from the dot face's own figures (5 by 7), lit in a light tint of the level's colour; the unlit
+   dots are the same colour, faint, as an unlit LED still shows its colour. A dot lights by its opacity, so its colour
+   can ease from level to level while a new value sweeps in, column by column. */
+.readout { display: grid; row-gap: 8px; justify-items: start; }
+.readout small { color: var(--muted); font-size: 12px; }
+.dmxw { display: flex; align-items: flex-end; gap: 8px; }
+.dmx { --lit: color-mix(in oklab, var(--level) 48%, white); display: block; flex: none; overflow: visible; filter: drop-shadow(0 0 4px color-mix(in oklab, var(--level) 50%, transparent)); }
+.dmx rect { fill: var(--lit); fill-opacity: .11; }
+.dmx rect.on { fill-opacity: 1; }
+@media (prefers-reduced-motion: no-preference) { .dmx rect { transition: fill-opacity 200ms ease-out; transition-delay: calc(var(--c) * 9ms); } }
+.dmxw .du { font-size: 11px; line-height: 1; font-weight: 600; letter-spacing: .06em; color: var(--muted); }
+:root[data-theme="light"] .dmx { --lit: color-mix(in oklab, var(--level) 80%, black); filter: none; }
+:root[data-theme="light"] .dmx rect { fill-opacity: .1; }
+:root[data-theme="light"] .dmx rect.on { fill-opacity: 1; }
+
+/* A press of the DPI switch: a light travels from the old level to the new one. */
+.bead2 { position: absolute; left: 0; top: 0; z-index: 3; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; pointer-events: none;
+  background: color-mix(in oklab, var(--level) 55%, white); box-shadow: 0 0 10px 3px var(--level); }
+
+/* Switching view: the faders rise to their levels one after another; the dial's needle sweeps up from the bottom of
+   its scale and the marks come in after it. */
+@property --f { syntax: '<number>'; inherits: true; initial-value: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  .inst.enter .fader { animation: fader-in 760ms var(--ease) both; animation-delay: calc(var(--n, 0) * 60ms); }
+  .inst.enter .fgrid { animation: fade-up 420ms ease-out both; }
+  .inst.enter .needle { animation: needle-in 1100ms cubic-bezier(.34, 1.25, .5, 1) 120ms both; }
+  .inst.enter .dm { animation: fade-in 380ms ease-out both; animation-delay: calc(200ms + var(--n, 0) * 70ms); }
+  .inst.enter :is(.drow, .dtrack, .dfill, .dt, .dl) { animation: fade-up 480ms var(--ease) both; animation-delay: calc(var(--n, 0) * 50ms); }
+}
+@keyframes fader-in { from { --f: 0; opacity: 0; } 25% { opacity: 1; } }
+@keyframes needle-in { from { rotate: -120deg; } }
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-up { from { opacity: 0; translate: 0 6px; } }
+
+/* ---------- Faders: one per level, like a mixing desk, as LED bars ----------
+   The scale's two lines are labelled in a gutter of their own, mirrored on the right so the tracks are centred.
+   Above the dashed line, the sensor's own limit, each track is hatched: there the sensor doubles its reading. --ti
+   keeps the scale clear of the track's ends, so a handle at either end sits whole inside it. Each track is a column
+   of square dots on the readout's grid, lit in the level's colour up to the handle; the handle is a pixel cap with
+   stepped corners and a lit line across it; the level in use glows. */
+.band[data-dpi="faders"] .inst { height: 188px; }
+.fdr { --ti: 6px; position: relative; display: flex; gap: 12px; height: 100%; padding-inline: 46px; }
+.fgrid { position: absolute; left: 0; right: 0; top: 24px; bottom: 22px; pointer-events: none; }
+.fg { position: absolute; left: 0; right: 0; bottom: calc(var(--ti) + var(--g) * (100% - 2 * var(--ti))); border-top: 1px solid var(--rule); }
+.fg span { position: absolute; left: 0; bottom: 1px; color: var(--muted); }
+.fg.lim { border-top: 1px dashed var(--line); }
+.fg.lim span { bottom: auto; top: 1px; }
+.fgrid::before { content: ""; position: absolute; left: 46px; right: 46px; top: 0; height: calc(var(--ti) + (1 - var(--lim)) * (100% - 2 * var(--ti)));
+  background: repeating-linear-gradient(-50deg, color-mix(in oklab, var(--muted) 18%, transparent) 0 1px, transparent 1px 6px); }
+.fader { position: relative; flex: 1; min-width: 0; display: grid; grid-template-rows: 24px 1fr 22px; justify-items: center; padding: 0; border: 0; background: transparent; cursor: ns-resize; touch-action: none; color: var(--soft); }
+/* The level in use stands in a faint column of its own colour. */
+.fader::before { content: ""; position: absolute; inset: 0 2px; border-radius: 4px; background: linear-gradient(to top, color-mix(in oklab, var(--c) 13%, transparent), transparent 80%); opacity: 0; transition: opacity 300ms ease-out; }
+.fader.active::before { opacity: 1; }
+.fv { line-height: 20px; white-space: nowrap; transition: color 200ms ease-out, scale 200ms var(--ease); }
+.fader.active .fv { color: var(--text); }
+.fader.drag .fv { color: var(--text); scale: 1.15; }
+.fader.sel .fv { box-shadow: 0 1px 0 var(--acc); }
+.ftrack { position: relative; width: 100%; max-width: 60px; }
+.ftrack::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px;
+  background: repeating-linear-gradient(to top, color-mix(in oklab, var(--c, var(--text)) 16%, transparent) 0 3px, transparent 3px 4px); }
+.ffill { position: absolute; left: 50%; bottom: 0; width: 3px; margin-left: -1.5px; height: calc(var(--ti) + var(--f) * (100% - 2 * var(--ti))); opacity: .6;
+  background: repeating-linear-gradient(to top, color-mix(in oklab, var(--c) 55%, white) 0 3px, transparent 3px 4px); transition: opacity 300ms ease-out; }
+:root[data-theme="light"] .ffill { background: repeating-linear-gradient(to top, color-mix(in oklab, var(--c) 80%, black) 0 3px, transparent 3px 4px); }
+.fader.active .ffill { opacity: 1; filter: drop-shadow(0 0 3px color-mix(in oklab, var(--c) 70%, transparent)); }
+.fhandle { position: absolute; left: 50%; bottom: calc(var(--ti) + var(--f) * (100% - 2 * var(--ti))); width: 30px; height: 12px; translate: -50% 50%; transition: scale 200ms var(--ease); }
+.fhandle::before { content: ""; position: absolute; inset: 0; background: var(--raised2); box-shadow: inset 0 0 0 1px var(--control);
+  clip-path: polygon(2px 0, calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+    2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px), 0 2px, 2px 2px); }
+.fhandle::after { content: ""; position: absolute; left: 6px; right: 6px; top: 5px; height: 2px; background: var(--c); opacity: .55; transition: opacity 300ms ease-out; }
+.inst:not(.dragging) :is(.fhandle, .ffill) { transition-property: opacity, scale, bottom, height; transition-duration: 300ms, 200ms, 420ms, 420ms; transition-timing-function: ease-out, var(--ease), var(--ease), var(--ease); }
+.fader.active .fhandle { filter: drop-shadow(0 0 6px color-mix(in oklab, var(--c) 65%, transparent)); }
+.fader.active .fhandle::before { background: color-mix(in oklab, var(--c) 18%, var(--raised2)); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--c) 60%, var(--control)); }
+.fader.active .fhandle::after, .fader.drag .fhandle::after, .fader.sel .fhandle::after { opacity: 1; }
+.fader:hover .fhandle, .fader.drag .fhandle, .fader.sel .fhandle { scale: 1.12; }
+.fn { position: relative; font-size: 11.5px; line-height: 22px; color: var(--muted); }
+.fader.next .fn::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--acc); }
+.fader .modd { position: absolute; top: 4px; right: 4px; }
+
+/* ---------- Dial: a gauge. Each level is a mark on the arc; the needle points at the one in use ---------- */
+.band[data-dpi="dial"] .inst { height: 164px; }
+.dial { display: flex; align-items: center; gap: 28px; height: 100%; }
+.dsvg { height: 100%; width: auto; aspect-ratio: 240 / 150; flex: none; overflow: visible; touch-action: none; }
+.dtrack { fill: none; stroke: var(--control); stroke-width: 2; }
+.dlim { fill: none; stroke: var(--surface); stroke-width: 2.4; stroke-dasharray: 2 3; }
+.dt { stroke: var(--line); stroke-width: 1; }
+.dt.major { stroke: var(--muted); stroke-width: 1.4; }
+.dl { font-size: 8.5px; fill: var(--muted); }
+.needle { transform-origin: 120px 104px; transition: rotate 760ms cubic-bezier(.34, 1.45, .5, 1); }
+.needle path { stroke: var(--text); stroke-width: 2; stroke-linecap: round; }
+.needle circle { fill: var(--raised2); stroke: var(--level); stroke-width: 2; }
+.dfill { fill: none; stroke: var(--level); stroke-width: 3; stroke-linecap: round; opacity: .75; filter: drop-shadow(0 0 3px color-mix(in oklab, var(--level) 70%, transparent)); }
+.dnext { fill: var(--acc); transition: cx 500ms var(--ease), cy 500ms var(--ease); }
+.dm { cursor: grab; }
+.dm rect { fill: var(--c); opacity: .5; stroke: var(--surface); stroke-width: 2; transition: opacity 300ms ease-out; }
+.dm.active rect { opacity: 1; filter: drop-shadow(0 0 4px var(--c)); }
+.dm.sel rect { stroke: var(--acc); }
+.dlegend { display: grid; grid-template-columns: repeat(3, minmax(0, 104px)); gap: 4px 10px; }
+.drow { position: relative; display: grid; grid-template-columns: auto 1fr; column-gap: 9px; align-items: center; padding: 6px 9px; border: 0; border-radius: var(--r); background: transparent; color: var(--soft); text-align: start; cursor: pointer; }
+.drow .pill { grid-row: span 2; width: 18px; height: 7px; border-radius: 2px; background: var(--c); opacity: .5; }
+.drow.active .pill { opacity: 1; box-shadow: 0 0 10px 1px color-mix(in oklab, var(--c) 55%, transparent); }
+.drow small { color: var(--muted); font-size: 11px; line-height: 14px; }
+.drow.active { color: var(--text); background: var(--raised); }
+.drow.next small .nx { color: var(--acc); }
+.drow.sel { box-shadow: inset 0 0 0 1px var(--acc); }
+.drow .modd { position: absolute; top: 6px; right: 6px; }
+
+/* ---------- Desktop: the instrument shares the dock's grid ---------- */
+.bsep, .fkey { display: none; }
+@media (min-width: 900px) {
+  .band[data-dpi="dial"] .inst { grid-column: 2 / 4; display: grid; grid-template-columns: subgrid; grid-template-rows: 100%; align-items: center; }
+  .band[data-dpi="dial"] .dial { display: contents; }
+  .band[data-dpi="dial"] .dsvg { grid-column: 1; justify-self: center; height: 100%; width: auto; }
+  .band[data-dpi="dial"] .dlegend { grid-column: 2; justify-self: start; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* With the faders, the right-hand column is their key: the hatched range and where the next press goes. */
+  .band[data-dpi="faders"] .inst { grid-column: 2 / 4; display: grid; grid-template-columns: subgrid; grid-template-rows: 100%; align-items: center; }
+  .band[data-dpi="faders"] .fdr { grid-column: 1; }
+  .fkey { grid-column: 2; display: grid; row-gap: 14px; justify-self: start; }
+  .krow { display: grid; grid-template-columns: 22px auto; column-gap: 11px; align-items: center; }
+  .krow b { display: block; font-size: 12.5px; line-height: 17px; font-weight: 600; color: var(--soft); }
+  .krow small { display: block; font-size: 11px; line-height: 15px; color: var(--muted); }
+  .kh { width: 22px; height: 12px; border-top: 1px dashed var(--line);
+    background: repeating-linear-gradient(-50deg, color-mix(in oklab, var(--muted) 18%, transparent) 0 1px, transparent 1px 6px); }
+  .kd { justify-self: center; width: 4px; height: 4px; border-radius: 50%; background: var(--acc); }
+  /* A ruler each side of the instrument, at the middle of the gap and as tall as it: the levels' own log scale, its
+     ticks facing the instrument, the sensor's limit dashed and a light level with the level in use. */
+  .band[data-dpi="faders"] { --ih: 188px; --sc-t: 30px; --sc-b: 28px; }
+  .band[data-dpi="dial"] { --ih: 164px; --sc-t: 12px; --sc-b: 12px; }
+  .bsep { display: block; position: relative; grid-row: 1; align-self: center; justify-self: start; width: 9px; height: var(--ih, 160px); translate: calc(-50% - var(--gap) / 2) 0; pointer-events: none; }
+  .bsep.s1 { grid-column: 2; }
+  .bsep.s2 { grid-column: 3; }
+  .bsep .sc { position: absolute; inset: var(--sc-t, 12px) 0 var(--sc-b, 12px); }
+  .bsep .sc::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 1px; background: var(--rule); }
+  .bsep .sc > * { position: absolute; left: 0; bottom: calc(var(--p) * 100%); width: 4px; height: 1px; translate: 0 50%; background: var(--line); }
+  .bsep .sc > .mj { width: 7px; background: var(--muted); }
+  .bsep .sc > .lim { width: 9px; height: 0; background: none; border-top: 1px dashed var(--muted); }
+  .bsep .sc > .now { bottom: calc(var(--a, 0) * 100%); width: 9px; height: 2px; border-radius: 1px; background: var(--level);
+    box-shadow: 0 0 8px color-mix(in oklab, var(--level) 70%, transparent); transition: bottom 420ms var(--ease), background-color 300ms ease-out; }
+  .bsep.s2 .sc::before, .bsep.s2 .sc > * { left: auto; right: 0; }
+}
+/* A narrower desktop window: smaller side columns and closer faders, so the middle keeps its room. */
+@media (min-width: 900px) and (max-width: 1180px) {
+  .band { --side: 172px; --gap: 22px; }
+  .band[data-dpi="dial"] { --side: 224px; }
+  .fdr { gap: 6px; padding-inline: 40px; }
+  .fgrid::before { left: 40px; right: 40px; }
+}
+/* A short window: the levels take less height, so the mouse keeps its size. */
+@media (min-width: 900px) and (max-height: 820px) {
+  .band[data-dpi="faders"] { --ih: 148px; }
+  .band[data-dpi="dial"] { --ih: 136px; }
+  .band[data-dpi="faders"] .inst { height: 148px; }
+  .band[data-dpi="dial"] .inst { height: 136px; }
+  .band .sub { display: none; }
+}
+
+/* ---------- The click log ---------- */
+.tmeters { display: flex; gap: 18px; }
+.tmeters div { display: grid; }
+.tmeters small { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+.logwrap { grid-column: 2; display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 12px; max-width: 1060px; }
+.band > .logwrap { grid-row: 1; }
+.logwrap .labels { display: grid; grid-template-rows: repeat(6, 1fr); color: var(--muted); font-size: 11px; text-align: end; line-height: 1; align-items: center; }
+.logwrap canvas { width: 100%; height: 108px; display: block; }
+.logwrap .axis2 { grid-column: 2; display: flex; justify-content: space-between; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+
+/* ---------- Not connected: the dock asks for the mouse ---------- */
+.band.connect { grid-template-columns: minmax(0, 1fr) auto; row-gap: 12px; }
+.band.connect .acts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.band.connect .state { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 17px; }
+.band.connect .state.err { color: var(--negative); }
+
+/* ---------- Tablet and phone: the dock is a card in the page's flow, one column ---------- */
+@media (max-width: 899px) {
+  .band { position: relative; left: auto; bottom: auto; translate: none; width: auto; margin: 0 12px; grid-template-columns: 1fr; row-gap: 14px; padding: 18px 16px 28px;
+    background: var(--surface); backdrop-filter: none; box-shadow: var(--ring); }
+  .band > :is(.inst, .logwrap) { grid-column: 1; grid-row: 2; }
+  .bleft { grid-template-columns: 1fr auto; align-items: end; }
+  .app:not(.testing) .band > .tst, .app.testing .band > .cfg { display: none !important; }
+  .app.testing .band > .tst, .app:not(.testing) .band > .cfg { animation: band-in 460ms var(--ease) both; }
+  .band.connect { grid-template-columns: 1fr; }
+  .band.connect .acts { justify-content: flex-start; }
+  .fv.dot { font-size: 10px; line-height: 12px; }
+  .dial { justify-content: center; }
+  .app:has(.slot:not(:empty)) .band { margin-bottom: 96px; }
+}
+@keyframes band-in { from { opacity: 0; translate: 0 10px; } }
+@media (min-width: 600px) and (max-width: 899px) {
+  .fdr { padding-right: 40px; }
+  .fgrid::before { right: 40px; }
+}
+@media (max-width: 739px) {
+  .band { margin-top: 0; }
+  .app:has(.slot:not(:empty)) .band { margin-bottom: 0; }
+  .fdr { gap: 6px; padding-left: 40px; padding-right: 0; }
+  .fgrid::before { left: 40px; right: 0; }
+  .fhandle { width: 26px; }
+  .band[data-dpi="dial"] .inst { height: auto; }
+  .dial { flex-direction: column; gap: 10px; }
+  .dsvg { height: 150px; }
+  .dlegend { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+}
+@media (max-width: 520px) { .bleft { grid-template-columns: 1fr; } }
+@media (max-width: 379px) {
+  .fdr { gap: 2px; padding-left: 30px; }
+  .fgrid::before { left: 30px; }
+  .fhandle { width: 20px; }
+  .fhandle::after { left: 4px; right: 4px; }
+  .band { padding-inline: 12px; }
+}

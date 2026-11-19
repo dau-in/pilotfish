@@ -19,8 +19,10 @@ Open `http://localhost:5173/?demo` to run the whole UI against a simulated mouse
 
 - `src/lib/protocol/index.js`: pure functions. Parses reports, builds packets, and decides whether a read confirms a write. No DOM, no I/O. Every byte layout is tested in `test/protocol.test.js`.
 - `src/lib/device/`: the transports. `hid.js` (WebHID) and `ble.js` (Web Bluetooth) expose the same link interface. `mouse.svelte.js` is the app-wide device state and the only place that writes to the mouse. `demo.js` is the fake link.
-- `src/lib/ui/`: screens and components. `studio.svelte.js` holds the draft the user edits before applying.
-- `src/lib/backup/`: the backup timeline in IndexedDB. `format.js` is pure (what a backup holds, file import and export) and tested in `test/backup.test.js`. Restoring a backup goes through `studio.svelte.js` like any edit, never straight to the device.
+- `src/lib/ui/`: the interface. `studio.svelte.js` holds the draft the user edits before applying; `view.svelte.js` what the screen shows (open card, face, Test); `Stage.svelte` with `stage/engine.js` draws and places the mouse, its callouts and the 3D turn; `Band.svelte` is the DPI dock; `lab.svelte.js` is Test. Profiles, battery history and display preferences live in this browser (`profiles`, `battery`, `prefs`).
+- `src/lib/art/`: our own drawing of the X11 (`x11.js`, both faces and the flanks), its WebGL turn (`turn.js`) and the lit-fin mark.
+- `src/styles/`: global CSS. Colours are tokens in `theme.css`; the only hue in the interface is the LED's (`--level`, `--led`).
+- `src/lib/backup/`: the backup timeline in IndexedDB. `format.js` is pure (what a backup holds, file import and export) and tested in `test/backup.test.js`. Going back to a backup, like loading a profile, puts it in the draft through `studio.svelte.js`, never straight to the device.
 - `src/lib/i18n/`: `en.js` (complete, the source of truth), `es.js` (may omit keys) and the `t()` helper.
 - `vite.config.js`: also writes the offline service worker at build time.
 

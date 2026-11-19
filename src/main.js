@@ -1,10 +1,12 @@
 import { mount } from 'svelte';
-// Public Sans ships with the app: no request to a font service, and it is there offline.
-import '@fontsource/public-sans/latin-400.css';
-import '@fontsource/public-sans/latin-500.css';
-import '@fontsource/public-sans/latin-600.css';
-import '@fontsource/public-sans/latin-700.css';
-import './app.css';
+// The faces ship with the app: no request to a font service, and they are there offline.
+import '@fontsource-variable/instrument-sans/wdth.css';
+import '@fontsource-variable/doto/wght.css';
+import '@fontsource/space-mono/latin-700.css';
+import './styles/theme.css';
+import './styles/shell.css';
+import './styles/stage.css';
+import './styles/band.css';
 import App from './App.svelte';
 
 export default mount(App, { target: document.getElementById('root') });
