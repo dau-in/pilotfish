@@ -15,6 +15,7 @@
     "vite": "^6.3.5"
   },
   "description": "Open-source configurator (PWA) for the Attack Shark X11 mouse",
+  "license": "MIT",
   "dependencies": {
     "@fontsource-variable/doto": "^5.3.0",
     "@fontsource-variable/instrument-sans": "^5.3.0",

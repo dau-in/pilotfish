@@ -7,7 +7,8 @@
   <a href="#features">Features</a> ·
   <a href="#safe-by-design">Safe by design</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#development">Development</a>
+  <a href="#development">Development</a> ·
+  <a href="#license">License</a>
 </p>
 
 Pilotfish is an open-source configurator for the **Attack Shark X11** wireless mouse. It runs in the browser and talks to
@@ -102,3 +103,7 @@ card adds [Yuji Syuku](https://fonts.google.com/specimen/Yuji+Syuku) and
 [Noto Sans Math](https://fonts.google.com/noto/specimen/Noto+Sans+Math). All of them are open-source.
 
 Pilotfish is an independent project. It is not affiliated with or endorsed by Attack Shark.
+
+## License
+
+[MIT](LICENSE). The bundled fonts keep their own license, the SIL Open Font License, which travels with them.
