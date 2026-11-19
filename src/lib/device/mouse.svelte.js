@@ -37,22 +37,51 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 // receiver nothing is sent without a recent heartbeat, and after a silence the link gets a second one to settle.
 const BEAT_GAP_MS = 6000;
 const FIRST_BEAT_WAIT_MS = 8000;
-const beat = { last: 0, streak: 0, needed: 1, watch: null, none: false }; // none: this receiver sends no heartbeat
+// none: this receiver sends no heartbeat. dozing: see doze() below; quick counts heartbeats in a row at the usual pace.
+const beat = { last: 0, streak: 0, needed: 1, watch: null, none: false, dozing: false, quick: 0, dozedAt: 0 };
 let refreshWhenAwake = false;
-const linked = () => mouse.kind !== 'dongle' || beat.none || (Date.now() - beat.last < BEAT_GAP_MS && beat.streak >= beat.needed);
+const linked = () => mouse.kind !== 'dongle' || beat.none
+  || (!beat.dozing && Date.now() - beat.last < BEAT_GAP_MS && beat.streak >= beat.needed);
+
+// Left still for a while, the mouse keeps sending its heartbeat over the receiver, only further apart (3 in 10 s
+// instead of 5), but stops answering requests (2026-11-11). Asking again straight away is the insisting that wedges
+// the receiver, so a request it doesn't answer puts the link to sleep until the mouse is clearly back: the heartbeat
+// at its usual pace again, something done on the mouse, or the pointer moving on this page.
+const AWAKE_GAP_MS = 2600;
+const DOZE_MIN_MS = 3000;
+function doze() {
+  Object.assign(beat, { dozing: true, quick: 0, dozedAt: Date.now() });
+  mouse.asleep = true;
+  refreshWhenAwake = true;
+}
+function wake() {
+  if (!beat.dozing || Date.now() - beat.dozedAt < DOZE_MIN_MS) return;
+  beat.dozing = false;
+  mouse.asleep = !linked();
+  if (!mouse.asleep && refreshWhenAwake) { refreshWhenAwake = false; scheduleRefresh(); }
+}
+// A request the mouse left unanswered over the receiver is the mouse dozing, not a fault.
+async function ask(fn) {
+  try { return await fn(); } catch (err) {
+    if (err?.code === 'noAnswer' && mouse.kind === 'dongle' && !beat.none) { doze(); throw new MouseError('asleep'); }
+    throw err;
+  }
+}
+if (typeof window !== 'undefined') addEventListener('pointermove', () => { if (beat.dozing) wake(); }, { passive: true });
 
 function onBeat() {
-  const now = Date.now();
-  if (beat.last && now - beat.last > BEAT_GAP_MS) Object.assign(beat, { streak: 0, needed: 2 });
-  Object.assign(beat, { last: now, streak: beat.streak + 1, none: false });
+  const now = Date.now(), gap = beat.last ? now - beat.last : Infinity;
+  if (beat.last && gap > BEAT_GAP_MS) Object.assign(beat, { streak: 0, needed: 2 });
+  Object.assign(beat, { last: now, streak: beat.streak + 1, none: false, quick: gap <= AWAKE_GAP_MS ? beat.quick + 1 : 0 });
   mouse.beatAt = now;
+  if (beat.dozing && beat.quick >= 2) wake();
   mouse.asleep = !linked();
   if (!mouse.asleep && refreshWhenAwake) { refreshWhenAwake = false; scheduleRefresh(); }
 }
 
 function watchBeats() {
   clearInterval(beat.watch);
-  Object.assign(beat, { last: 0, streak: 0, needed: 1, none: false });
+  Object.assign(beat, { last: 0, streak: 0, needed: 1, none: false, dozing: false, quick: 0, dozedAt: 0 });
   if (mouse.kind === 'dongle') beat.watch = setInterval(() => { mouse.asleep = !linked(); }, 1000);
 }
 
@@ -71,7 +100,7 @@ function reset(status = 'idle', error = null) {
 }
 
 async function refresh() {
-  mouse.profile = await link.readProfile();
+  mouse.profile = await ask(() => link.readProfile());
   mouse.readAt = new Date();
 }
 
@@ -87,6 +116,8 @@ function scheduleRefresh() {
 
 function onNotice(notice) {
   if (notice.battery) { mouse.battery = notice.battery; onBeat(); return; }
+  // Something done on the mouse: it is awake.
+  if (beat.dozing) { beat.dozedAt = 0; wake(); }
   scheduleRefresh();
 }
 
@@ -107,8 +138,14 @@ async function attach(newLink) {
       if (link !== newLink) return;
       if (!beat.last) { beat.none = true; mouse.asleep = false; }
     }
-    mouse.version = await link.readVersion();
-    await refresh();
+    // Dozing at connect time: wait for it to come back, then ask once more.
+    const readAll = async () => { mouse.version = await ask(() => link.readVersion()); await refresh(); };
+    await readAll().catch(async err => {
+      if (err?.code !== 'asleep') throw err;
+      await untilLinked(60000);
+      if (link === newLink) await readAll();
+    });
+    if (link !== newLink) return;
     mouse.status = 'ready';
   } catch (err) {
     await link?.close().catch(() => {});
@@ -122,9 +159,10 @@ async function attach(newLink) {
 // Bluetooth does the same only where Chrome exposes getDevices() (still behind a flag in most versions);
 // otherwise the mouse has to be put in pairing mode and picked again.
 export async function autoConnect() {
-  if (import.meta.env.DEV && new URLSearchParams(location.search).has('demo')) {
+  const demo = import.meta.env.DEV && new URLSearchParams(location.search).get('demo');
+  if (typeof demo === 'string') {
     const { DemoLink } = await import('./demo.js');
-    await attach(new DemoLink());
+    await attach(new DemoLink(demo));
     return;
   }
   if (support.hid) {
@@ -172,12 +210,12 @@ const CONFIRM_GAP_MS = 800;
 async function write(build) {
   if (!link || mouse.status !== 'ready') throw new MouseError('notConnected');
   await untilLinked(10000);
-  const packet = build(await link.readProfile());
+  const packet = build(await ask(() => link.readProfile()));
   for (let send = 0; send < 2; send++) {
     await link.write(packet);
     for (let look = 0; look < CONFIRM_LOOKS; look++) {
       if (look) await sleep(CONFIRM_GAP_MS);
-      const profile = await link.readProfile();
+      const profile = await ask(() => link.readProfile());
       if (confirms(profile, packet)) {
         mouse.profile = profile;
         mouse.readAt = new Date();
@@ -199,7 +237,7 @@ export async function applyPolling(hz) {
 
 export async function readMacro(button) {
   await untilLinked(10000);
-  return link.readMacro(MACRO_SLOTS[button]);
+  return ask(() => link.readMacro(MACRO_SLOTS[button]));
 }
 
 // Saves a button's macro (verified by reading it back) and assigns it to that button.
@@ -209,6 +247,6 @@ export async function saveMacro(button, { mode, loops, events }) {
   const packet = buildMacroPacket(id, { mode, loops, events });
   // Byte 28 counts slots (a long pause takes two); kept short enough to be read back whole.
   if (packet[28] > mouse.maxMacroSteps) throw new MouseError('macroSteps', { max: mouse.maxMacroSteps });
-  await link.writeMacro(packet);
+  await ask(() => link.writeMacro(packet));
   await applyButtons({ [button]: [18, 0, id] });
 }
