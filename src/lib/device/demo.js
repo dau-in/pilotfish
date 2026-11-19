@@ -11,15 +11,18 @@ const BUTTONS = `08 3b 01 02 00 00 03 00 00 04 00 00 01 00 00 01 00 00 0d 00 00 
 const bytes = s => s.trim().split(/\s+/).map(x => parseInt(x, 16));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// ?demo is the receiver; ?demo=cable and ?demo=bluetooth pretend those links, with what each one can and can't do.
 export class DemoLink {
-  kind = 'dongle';
-  canChangePolling = true;
-  maxMacroSteps = 17;
   device = null;
   #beats = null;
-  // The heartbeat a real one sends through the receiver every ~2 s.
+  constructor(kind) {
+    this.kind = ['cable', 'bluetooth'].includes(kind) ? kind : 'dongle';
+    this.canChangePolling = this.kind !== 'bluetooth';
+    this.maxMacroSteps = this.kind === 'bluetooth' ? 0 : 17;
+  }
+  // The battery report a real one sends every ~2 s through the receiver; on the cable it is charging.
   async open(onNotice) {
-    const beat = () => onNotice({ battery: { state: 'battery', level: 86 } });
+    const beat = () => onNotice({ battery: this.kind === 'cable' ? { state: 'charging', level: 86 } : { state: 'battery', level: 86 } });
     setTimeout(beat, 300);
     this.#beats = setInterval(beat, 2000);
   }
