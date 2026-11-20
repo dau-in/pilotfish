@@ -47,6 +47,9 @@ export class BleLink {
       const value = w.match(bytes);
       if (value !== undefined) { this.#waiters.delete(w); w.resolve(value); return; }
     }
+    // The mouse's own messages: the battery, or something changed on it (the DPI switch). Anything else is ignored:
+    // the X11 sends each answer twice, and the repeat, arriving after its read has finished, must not count as a
+    // change, or every read would set off another.
     const notice = parseBleNotice(bytes);
     if (notice && !notice.ack) this.#onNotice(notice);
   }

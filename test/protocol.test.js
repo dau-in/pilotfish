@@ -221,6 +221,11 @@ test('Bluetooth profile, notices and confirmations', () => {
   assert.deepEqual(parseBleNotice(bytes('55 40 01 63')).battery, { state: 'battery', level: 99 });
   assert.deepEqual(parseBleNotice(bytes('55 50 00 05')), { ack: { report: 5, ok: true } });
   assert.equal(parseBleNotice(bytes('a1 01 12')), null);
+  // The DPI switch, pressed on the owner's X11 over Bluetooth (2026-11-19): 55 10 <new level> 00.
+  assert.deepEqual(parseBleNotice(bytes('55 10 03 00')), { changed: true, level: 3 });
+  assert.deepEqual(parseBleNotice(bytes('55 10 01 00')), { changed: true, level: 1 });
+  // A repeated answer to a profile read is not a notice.
+  assert.equal(parseBleNotice(bytes('a0 01 fe 00 01 3f 20 20 12 25 38 4b 75 81 01')), null);
 });
 
 test('a fresh read confirms a write only when the mouse holds exactly what was sent', () => {

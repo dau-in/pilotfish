@@ -447,6 +447,8 @@ export function parseBleNotice(raw) {
   const b = Array.from(raw);
   if (b[0] !== X11_DEVICE_NO) return null;
   if (b[1] === 0x50) return { ack: { report: b[3], ok: b[2] === 0 } };
+  // The DPI switch pressed: 55 10 <new level> 00 (seen on the owner's X11, 2026-11-19).
+  if (b[1] === 0x10) return { changed: true, level: b[2] };
   return parseNotify([3, ...b]);
 }
 
