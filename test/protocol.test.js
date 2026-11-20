@@ -109,6 +109,10 @@ test('power writes match the official app byte for byte', () => {
   // Above 15 minutes the high nibble moves into the speed byte.
   assert.deepEqual(buildPowerPacket(p, { sleepMinutes: 30 }).slice(4, 6), [0x13, 0xe8]);
   assert.throws(() => buildPowerPacket(p, { sleepMinutes: 0 }));
+  // One minute, written through the receiver, made the X11 drop the link and blink red until the receiver was
+  // plugged in again (2026-11-19); 2 and 11 went through. The official slider offers it, Pilotfish doesn't.
+  assert.throws(() => buildPowerPacket(p, { sleepMinutes: 1 }), /sleepRange/);
+  assert.equal(buildPowerPacket(p, { sleepMinutes: 2 })[5], 0x28);
   assert.throws(() => buildPowerPacket(p, { keyResponseMs: 7 }));
 });
 

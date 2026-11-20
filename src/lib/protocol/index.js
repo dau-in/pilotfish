@@ -212,7 +212,9 @@ export function buildButtonPacket(profile, assign = {}) {
 
 /* ---------- Power: sleep timer and key response (report 0x05, shared with the lighting) ---------- */
 
-export const SLEEP_RANGE = [1, 60];       // minutes, as the official driver's slider
+// Minutes. The official slider starts at 1, but 1 written through the receiver made the mouse drop the link and blink
+// red until the receiver was plugged in again (2026-11-19); 2 and up went through.
+export const SLEEP_RANGE = [2, 60];
 export const RESPONSE_RANGE = [4, 50, 2]; // ms, min / max / step
 
 // The light modes, in the official app's order for the X11; the firmware stores the position in the high nibble.
