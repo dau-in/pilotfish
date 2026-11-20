@@ -429,7 +429,7 @@ export default {
   'settings.display': 'Display',
   'settings.about': 'About',
   'report.title': 'Something not working?',
-  'report.lede': 'For a problem that shows no error, like a change that doesn’t stick. The report says which browser and mouse and what happened, never your settings.',
+  'report.lede': 'For problems that show no error, like a change that doesn’t stick or a button that doesn’t respond. It copies a detailed log of what the app did, with the browser and the mouse, so the fault is easier to find. Never your settings.',
   'report.private': 'Nothing is sent on its own: Pilotfish runs in this page, and the report stays here until you paste it somewhere.',
   'report.copy': 'Copy report',
   'report.copied': 'Copied',

@@ -415,7 +415,7 @@ export default {
   'settings.display': 'Pantalla',
   'settings.about': 'Acerca de',
   'report.title': '¿Algo no funciona?',
-  'report.lede': 'Para un problema que no muestra error, como un cambio que no se queda. El reporte dice qué navegador y qué mouse, y qué pasó; nunca tus ajustes.',
+  'report.lede': 'Para fallos que no muestran un error, como un cambio que no se queda o un botón que no responde. Copia un registro detallado de lo que hizo la app, con el navegador y el mouse, para ubicar mejor el fallo. Nunca incluye tus ajustes.',
   'report.private': 'No se envía nada solo: Pilotfish funciona en esta página, y el reporte se queda aquí hasta que tú lo pegues en algún lado.',
   'report.copy': 'Copiar reporte',
   'report.copied': 'Copiado',
