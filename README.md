@@ -3,14 +3,15 @@
   <img src="docs/media/banner-dark.png" alt="Pilotfish: the Attack Shark X11, set up from your browser" width="100%">
 </picture>
 
-<h3 align="center"><a href="https://pilotfish.vercel.app">Open Pilotfish →</a></h3>
+<p align="center">
+  <a href="https://pilotfish.vercel.app"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/open-light.png"><img src="docs/media/cards/open-dark.png" alt="Open Pilotfish" width="384"></picture></a>
+</p>
 
 <p align="center">
-  <a href="#features">Features</a> ·
-  <a href="#at-a-glance">At a glance</a> ·
-  <a href="#safe-by-design">Safe by design</a> ·
-  <a href="#use-it">Use it</a> ·
-  <a href="#development">Development</a>
+  <a href="#features"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/features-light.png"><img src="docs/media/cards/features-dark.png" alt="Features" width="190"></picture></a>
+  <a href="#safe-by-design"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/safety-light.png"><img src="docs/media/cards/safety-dark.png" alt="Safe by design" width="190"></picture></a>
+  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/use-light.png"><img src="docs/media/cards/use-dark.png" alt="Use it" width="190"></picture></a>
+  <a href="#development"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/dev-light.png"><img src="docs/media/cards/dev-dark.png" alt="Development" width="190"></picture></a>
 </p>
 
 Pilotfish is an open-source configurator for the **Attack Shark X11** wireless mouse. It runs in the browser and talks to
