@@ -467,6 +467,7 @@ export default {
   'error.sendFailed': ({ kind }) => (kind === 'dongle'
     ? 'el receptor no llega al mouse. Revisa que esté encendido y en 2.4 GHz, y que el software oficial esté cerrado. Por cable también funciona.'
     : 'el mouse no aceptó el pedido. Cierra el software oficial, vuelve a conectar el cable y reintenta.'),
+  'error.noConfigInterface': 'el navegador no dio acceso a los ajustes del mouse. Desconéctalo, vuelve a conectarlo e inténtalo otra vez.',
   'error.noAnswer': 'el mouse no respondió a tiempo',
   'error.wrongAnswer': 'el mouse respondió otra cosa',
   'error.macroNotSaved': 'el mouse no guardó la macro como se envió',

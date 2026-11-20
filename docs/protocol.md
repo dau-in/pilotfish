@@ -27,6 +27,11 @@ Over USB, both the cable and the receiver expose interface `MI_02` with two coll
 - **Configuration:** usage page `0x0B` (`COL04`). 64-byte feature reports with IDs `04` … `0D`, `10` and `A0`. In WebHID, filter on `{ vendorId: 0x1d57, productId, usagePage: 0x0b }`.
 - **Notifications:** usage page `0x0A` (`COL03`). Input report `03`, 5 bytes.
 
+The receiver has other interfaces too, such as its media keys on usage page `0x0C`, which take no feature reports.
+WebHID's chooser hands back **every interface** of the device picked, in no fixed order. Open the one whose collections
+include usage page `0x0B`: on another owner's Windows 11 the media keys came first, and every write to them failed with
+"Failed to write the feature report".
+
 The sensor is a PixArt PAW3311. In every frame the mouse sends, it calls itself device number `0x55` (85).
 
 ## Conventions

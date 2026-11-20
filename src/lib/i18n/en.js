@@ -481,6 +481,7 @@ export default {
   'error.sendFailed': ({ kind }) => (kind === 'dongle'
     ? 'the receiver couldn’t reach the mouse. Check it is switched on and set to 2.4 GHz, and that the official software is closed. The cable works too.'
     : 'the mouse didn’t take the request. Close the official software, plug the cable in again and retry.'),
+  'error.noConfigInterface': 'the browser didn’t give access to the mouse’s settings. Unplug it, plug it in again and connect once more.',
   'error.noAnswer': 'the mouse didn’t answer in time',
   'error.wrongAnswer': 'the mouse answered something else',
   'error.macroNotSaved': 'the mouse didn’t save the macro as it was sent',

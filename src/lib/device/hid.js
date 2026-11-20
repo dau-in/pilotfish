@@ -19,6 +19,11 @@ export const HID_FILTERS = Object.keys(KINDS).map(pid => ({ vendorId: VENDOR_ID,
 export const isX11Hid = d => d.vendorId === VENDOR_ID && d.productId in KINDS
   && d.collections.some(c => c.usagePage === CONFIG_PAGE);
 
+// The browser's chooser hands back every interface of the device picked, in no fixed order: the receiver's media keys
+// (usage page 0x0C) can come first, and they take no feature reports, so writing to them fails (another owner's X11 on
+// Windows 11, 2026-11-20). Only the interface with the configuration collection will do.
+export const pickConfigInterface = devices => devices.find(isX11Hid) ?? null;
+
 export class HidLink {
   #device;
   #queue = Promise.resolve();

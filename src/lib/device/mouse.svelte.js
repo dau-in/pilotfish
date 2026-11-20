@@ -5,7 +5,7 @@ import {
   MACRO_SLOTS, MouseError, confirms, buildButtonPacket, buildDpiPacket, buildLightPacket, buildMacroPacket, buildPollingPacket,
 } from '../protocol/index.js';
 import { BLE_OPTIONS, BleLink } from './ble.js';
-import { HID_FILTERS, HidLink, isX11Hid } from './hid.js';
+import { HID_FILTERS, HidLink, isX11Hid, pickConfigInterface } from './hid.js';
 import { note } from './trace.js';
 
 export const support = {
@@ -193,8 +193,12 @@ export async function autoConnect() {
 }
 
 export async function connectUsb() {
-  const [device] = await navigator.hid.requestDevice({ filters: HID_FILTERS });
-  if (device) await attach(new HidLink(device));
+  const devices = await navigator.hid.requestDevice({ filters: HID_FILTERS });
+  if (!devices.length) return;
+  note(`picked: ${devices.map(d => d.collections.map(c => c.usagePage.toString(16)).join('+')).join(', ')}`);
+  const device = pickConfigInterface(devices);
+  if (!device) { reset('error', new MouseError('noConfigInterface')); return; }
+  await attach(new HidLink(device));
 }
 
 // Bluetooth: Chrome only lists devices that advertise, so the mouse must be in pairing mode the first time.

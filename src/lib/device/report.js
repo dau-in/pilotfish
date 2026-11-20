@@ -57,8 +57,11 @@ export async function buildReport(err) {
     `- Link: ${d.kind ?? 'none'}, status ${d.status}${d.version ? `, firmware ${d.version}` : ''}`,
     `- Error: ${errorLine(error)}`,
   ];
-  if (d.device?.collections) lines.push('', '<details><summary>The mouse as the browser sees it</summary>', '', '```json', JSON.stringify(hidDevice(d.device), null, 1), '```', '</details>');
+  if (d.device?.collections) lines.push(`- Interface in use: ${d.device.collections.map(c => hex(c.usagePage)).join(' + ')}`);
   else if (d.device) lines.push(`- Bluetooth device: ${d.device.name ?? 'unnamed'}`);
+  // Every interface of the mouse this page may open, to see whether the configuration one is among them.
+  const granted = 'hid' in navigator ? (await navigator.hid.getDevices().catch(() => [])).filter(x => x.vendorId === 0x1d57) : [];
+  if (granted.length) lines.push('', '<details><summary>The mouse as the browser sees it</summary>', '', '```json', JSON.stringify(granted.map(hidDevice), null, 1), '```', '</details>');
   const steps = recent();
   if (steps.length) lines.push('', '<details><summary>Last steps</summary>', '', '```', ...steps, '```', '</details>');
   return lines.join('\n');
