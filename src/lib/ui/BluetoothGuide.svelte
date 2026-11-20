@@ -5,6 +5,7 @@
   import { connectBluetooth } from '../device/mouse.svelte.js';
   import { errorText, t } from '../i18n/index.svelte.js';
   import Icon from './Icon.svelte';
+  import ReportActions from './ReportActions.svelte';
   import { view } from './view.svelte.js';
 
   let busy = $state(false), error = $state(null), go = $state();
@@ -35,7 +36,7 @@
     </ol>
     <p class="fine">{t('bt.missing')}</p>
     <p class="fine">{t('bt.everyTime')}</p>
-    {#if error}<p class="warn" role="alert">{t('welcome.failed', { msg: errorText(error) })}</p>{/if}
+    {#if error}<div class="warn" role="alert"><p>{t('welcome.failed', { msg: errorText(error) })}</p><ReportActions {error} /></div>{/if}
     <div class="wgo">
       <button class="btn" type="button" disabled={busy} onclick={() => (view.btGuide = false)}>{t('action.cancel')}</button>
       <button class="btn go" type="button" bind:this={go} disabled={busy} onclick={choose}>{t('bt.choose')}</button>

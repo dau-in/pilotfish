@@ -364,3 +364,10 @@
 .btguide .n { display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--r); background: var(--well); box-shadow: var(--ring); color: var(--acc); }
 .btguide .warn { margin-top: 12px; }
 .btguide .wgo { gap: 8px; }
+
+/* ---------- Problem report: copy it, or open an issue with it ---------- */
+.reportacts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.reportacts .btn { text-decoration: none; color: var(--text); }
+.reportacts .btn svg.i { width: 12px; height: 12px; }
+.state.err p, .btguide .warn p { margin: 0; }
+.drawer .reportacts { margin-top: 10px; }

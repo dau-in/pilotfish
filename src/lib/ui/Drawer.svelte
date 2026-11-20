@@ -6,6 +6,7 @@
   import { differences, draftFrom, settingsOf } from '../backup/format.js';
   import { LANGS, clock, fmt, i18n, locale, setLang, t } from '../i18n/index.svelte.js';
   import Credits from './Credits.svelte';
+  import ReportActions from './ReportActions.svelte';
   import DpiPicker from './DpiPicker.svelte';
   import Icon from './Icon.svelte';
   import ShellPicker from './ShellPicker.svelte';
@@ -124,6 +125,7 @@
     <section class="sgroup">
       <p class="skick"><Icon name="info-box" /><span>{t('settings.about')}</span></p>
       <div class="safe"><Icon name="shield" /><p>{@html t('settings.safe')}</p></div>
+      <h3>{t('report.title')}</h3><p class="note">{t('report.lede')}</p><ReportActions />
       <h3>{t('settings.madeBy')}</h3><Credits />
     </section>
   {/if}

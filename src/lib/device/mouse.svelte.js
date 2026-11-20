@@ -6,6 +6,7 @@ import {
 } from '../protocol/index.js';
 import { BLE_OPTIONS, BleLink } from './ble.js';
 import { HID_FILTERS, HidLink, isX11Hid } from './hid.js';
+import { note } from './trace.js';
 
 export const support = {
   hid: typeof navigator !== 'undefined' && 'hid' in navigator,
@@ -28,6 +29,7 @@ export const mouse = $state({
 });
 
 let link = null;
+let last = { device: null, kind: null }; // kept after a failure, for the report
 let refreshTimer = null;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -51,6 +53,7 @@ const linked = () => mouse.kind !== 'dongle' || beat.none
 const AWAKE_GAP_MS = 2600;
 const DOZE_MIN_MS = 3000;
 function doze() {
+  note('receiver: no answer, dozing');
   Object.assign(beat, { dozing: true, quick: 0, dozedAt: Date.now() });
   mouse.asleep = true;
   refreshWhenAwake = true;
@@ -58,6 +61,7 @@ function doze() {
 function wake() {
   if (!beat.dozing || Date.now() - beat.dozedAt < DOZE_MIN_MS) return;
   beat.dozing = false;
+  note('receiver: awake');
   mouse.asleep = !linked();
   if (!mouse.asleep && refreshWhenAwake) { refreshWhenAwake = false; scheduleRefresh(); }
 }
@@ -125,6 +129,7 @@ function onNotice(notice) {
 async function attach(newLink) {
   if (link) await link.close().catch(() => {});
   link = newLink;
+  last = { device: newLink.device, kind: newLink.kind };
   Object.assign(mouse, {
     status: 'connecting', kind: link.kind, error: null,
     canChangePolling: link.canChangePolling, maxMacroSteps: link.maxMacroSteps,
@@ -137,6 +142,7 @@ async function attach(newLink) {
       mouse.asleep = true;
       await untilLinked(FIRST_BEAT_WAIT_MS).catch(() => {});
       if (link !== newLink) return;
+      note(beat.last ? 'receiver: heartbeat seen' : 'receiver: no heartbeat in 8 s, asking anyway');
       if (!beat.last) { beat.none = true; mouse.asleep = false; }
     }
     // Dozing at connect time: wait for it to come back, then ask once more.
@@ -148,11 +154,16 @@ async function attach(newLink) {
     });
     if (link !== newLink) return;
     mouse.status = 'ready';
+    note(`ready, firmware ${mouse.version}`);
   } catch (err) {
+    note(`connect failed: ${err?.code ?? `${err?.name}: ${err?.message}`}`);
     await link?.close().catch(() => {});
     reset('error', err); // kept whole: the screen words it in the user's language
   }
 }
+
+// What a problem report needs to know about the link, also after it failed.
+export const diagnostics = () => ({ kind: mouse.kind ?? last.kind, status: mouse.status, version: mouse.version, error: mouse.error, device: last.device });
 
 /* ---------- Finding the mouse ---------- */
 

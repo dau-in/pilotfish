@@ -4,6 +4,7 @@
 import {
   BLE, BLE_READ, MouseError, bleProfileToReport, bleRequest, parseBleNotice, parseBleVersion, parseProfile,
 } from '../protocol/index.js';
+import { hexBytes, note } from './trace.js';
 
 const ANSWER_TIMEOUT_MS = 3000;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -30,6 +31,7 @@ export class BleLink {
   async open(onNotice, onGone) {
     this.#onNotice = onNotice ?? (() => {});
     this.#device.addEventListener('gattserverdisconnected', () => onGone?.(), { once: true });
+    note(`open bluetooth ${this.#device.name ?? ''}`);
     this.#server = await this.#device.gatt.connect();
     const service = await this.#server.getPrimaryService(BLE.SERVICE);
     this.#tx = await service.getCharacteristic(BLE.WRITE);
@@ -74,7 +76,12 @@ export class BleLink {
 
   async #read(cmd, what, attempts = 2) {
     for (let a = 1; ; a++) {
-      try { return await this.#exchange(bleRequest(cmd), b => (b[0] === cmd ? b : undefined), what); } catch (err) {
+      try {
+        const b = await this.#exchange(bleRequest(cmd), b => (b[0] === cmd ? b : undefined), what);
+        note(`read ${hexBytes([cmd])}: ok`);
+        return b;
+      } catch (err) {
+        note(`read ${hexBytes([cmd])}: ${err.code ?? `${err.name}: ${err.message}`} (try ${a}/${attempts})`);
         if (a >= attempts) throw err;
         await sleep(200);
       }
@@ -100,6 +107,7 @@ export class BleLink {
         const n = parseBleNotice(b);
         return n?.ack?.report === packet[0] ? n.ack : undefined;
       }, 'confirmation');
+      note(`write ${hexBytes(packet)}: ${ack.ok ? 'stored' : 'refused'}`);
       if (!ack.ok) throw new MouseError('rejected');
     });
   }

@@ -10,6 +10,7 @@
   import { NATIVE_MAX, snapDpi, stepDpi } from './shared.js';
   import { studio } from './studio.svelte.js';
   import { openLevel, reduced, view } from './view.svelte.js';
+  import ReportActions from './ReportActions.svelte';
 
   let { ready } = $props();
 
@@ -178,7 +179,7 @@
       </div>
     {/if}
     {#if mouse.status === 'connecting'}<p class="state">{t(mouse.asleep ? 'welcome.asleep' : 'welcome.reading')}</p>
-    {:else if error || mouse.error}<p class="state err">{t('welcome.failed', { msg: errorText(error ?? mouse.error) })}</p>
+    {:else if error || mouse.error}<div class="state err"><p>{t('welcome.failed', { msg: errorText(error ?? mouse.error) })}</p><ReportActions error={error ?? mouse.error} /></div>
     {:else}<p class="state">{t('welcome.safety')}</p>{/if}
   </section>
 {:else}

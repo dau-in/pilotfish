@@ -4,6 +4,7 @@ import {
   MACRO_WEB_MAX_EVENTS, MouseError, REPORT, REQUEST_BUTTONS, REQUEST_PROFILE, REQUEST_VERSION, STATUS_READY,
   macroChunks, parseButtonReport, parseMacroHead, parseNotify, parseProfile, parseVersion, requestMacroHead,
 } from '../protocol/index.js';
+import { hexBytes, note } from './trace.js';
 
 const VENDOR_ID = 0x1d57;
 const KINDS = { 0xfa55: 'cable', 0xfa60: 'dongle' };
@@ -34,6 +35,7 @@ export class HidLink {
 
   async open(onNotice) {
     this.#onNotice = onNotice ?? (() => {});
+    note(`open ${this.kind} ${this.#device.productName ?? ''} (${this.#device.opened ? 'already open' : 'opening'})`);
     if (!this.#device.opened) await this.#device.open();
     // Report 3 (the notify collection): the battery heartbeat over the receiver, or something changed on the mouse.
     this.#device.oninputreport = e => {
@@ -61,9 +63,10 @@ export class HidLink {
   async #send(packet, attempts = 4) {
     for (let i = 1; ; i++) {
       try { return await this.#device.sendFeatureReport(packet[0], Uint8Array.from(packet.slice(1))); } catch (err) {
+        note(`send ${hexBytes(packet)}: ${err.name}: ${err.message} (try ${i}/${attempts})`);
         if (i >= attempts) {
           console.warn('Pilotfish: sendFeatureReport failed', this.kind, err);
-          throw new MouseError('sendFailed', { kind: this.kind });
+          throw Object.assign(new MouseError('sendFailed', { kind: this.kind }), { cause: err });
         }
         await sleep(120);
       }
@@ -91,8 +94,10 @@ export class HidLink {
         if (!ready) throw new MouseError('noAnswer');
         const answer = await this.#get(id);
         if (answer[0] !== id) throw new MouseError('wrongAnswer');
+        note(`read ${hexBytes(req)}: ok`);
         return answer;
       } catch (err) {
+        note(`read ${hexBytes(req)}: ${err.code ?? `${err.name}: ${err.message}`} (try ${a}/${attempts})`);
         if (a >= attempts) throw err;
         await sleep(150 * a);
       }
@@ -116,7 +121,7 @@ export class HidLink {
   }
 
   write(packet) {
-    return this.#run(async () => { await this.#send(packet); await sleep(SETTLE_MS[this.kind]); });
+    return this.#run(async () => { await this.#send(packet); note(`write ${hexBytes(packet)}: sent`); await sleep(SETTLE_MS[this.kind]); });
   }
 
   // Macros go out in 64-byte pieces half a second apart, then are read back: the head must match what was sent.
