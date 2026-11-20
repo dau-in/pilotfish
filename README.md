@@ -7,151 +7,92 @@
   <a href="https://pilotfish.vercel.app"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/open-light.png"><img src="docs/media/cards/open-dark.png" alt="Open Pilotfish" width="384"></picture></a>
 </p>
 
-<p align="center">
-  <a href="LICENSE"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/license-light.png"><img src="docs/media/badges/license-dark.png" alt="License: MIT" height="28" width="106"></picture></a>
-  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/browsers-light.png"><img src="docs/media/badges/browsers-dark.png" alt="Browsers: Chrome, Edge, Opera" height="28" width="231"></picture></a>
-  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/links-light.png"><img src="docs/media/badges/links-dark.png" alt="Connects: USB, 2.4 GHz, Bluetooth" height="28" width="244"></picture></a>
-  <br>
-  <a href="https://pilotfish.vercel.app"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/runs-light.png"><img src="docs/media/badges/runs-dark.png" alt="Runs in the page, offline" height="28" width="184"></picture></a>
-  <a href="#development"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/stack-light.png"><img src="docs/media/badges/stack-dark.png" alt="Built with Svelte 5 and WebHID" height="28" width="210"></picture></a>
-  <a href="test"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/tests-light.png"><img src="docs/media/badges/tests-dark.png" alt="Tested on real USB captures" height="28" width="201"></picture></a>
-</p>
-
-Pilotfish is an open-source configurator for the **Attack Shark X11** wireless mouse. It runs in the browser and talks to
-the mouse directly, over the USB cable, the 2.4 GHz receiver or Bluetooth. There is nothing to install and no server:
-your settings go from the page to the mouse and nowhere else.
+An open-source configurator for the **Attack Shark X11**. It talks to the mouse straight from the page: nothing to
+install, no server, and your settings go nowhere else.
 
 <p align="center">
   <img src="docs/media/demo.webp" alt="A tour of Pilotfish: pointing at the mouse's parts, changing its light, dragging a DPI level, turning the mouse over and testing its buttons" width="100%">
 </p>
 
-## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/heart-light.svg"><img src="docs/media/icons/heart-dark.svg" alt="" width="24" height="24"></picture> Why
+The X11 was my first gaming mouse, and I love it. Its official software, not so much: it is dated and confusing. So I
+reverse-engineered the protocol and made the app I wanted, where the mouse itself is the interface.
 
-The X11 was my first gaming mouse, and I love it. Its official software is another story: it looks dated, it is hard to
-find your way around, and even working out how a macro works takes guesswork. So I reverse-engineered the protocol and
-made the app I wanted: the mouse itself is the interface. Point at a part to see what it does, touch it to change it, and
-turn the mouse over to reach what is underneath.
-
-## <a id="features"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/zap-light.svg"><img src="docs/media/icons/zap-dark.svg" alt="" width="24" height="24"></picture> Features
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/zap-light.svg"><img src="docs/media/icons/zap-dark.svg" alt="" width="24" height="24"></picture> Features
 
 <table>
   <tr>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/mouse-light.svg">
-        <img src="docs/media/icons/mouse-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/mouse-light.svg"><img src="docs/media/icons/mouse-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>The mouse is the interface</b><br>
-      <sub>Every part says what it does. Touch one to change it, or turn the mouse over by hand to reach what is underneath.</sub>
+      <sub>Every part says what it does. Touch one to change it; turn the mouse over for the rest.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/sliders-light.svg">
-        <img src="docs/media/icons/sliders-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/sliders-light.svg"><img src="docs/media/icons/sliders-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Six DPI levels</b><br>
-      <sub>Faders or a dial, 50 to 22,000, each level with its own colour.</sub>
+      <sub>50 to 22,000 on faders or a dial, each level in its own colour.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/lightbulb-on-light.svg">
-        <img src="docs/media/icons/lightbulb-on-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/lightbulb-on-light.svg"><img src="docs/media/icons/lightbulb-on-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Light, previewed</b><br>
-      <sub>Each effect plays on the drawing and on the desk around it before you apply it.</sub>
+      <sub>Every effect plays on the drawing before you apply it.</sub>
     </td>
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/keyboard-light.svg">
-        <img src="docs/media/icons/keyboard-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/keyboard-light.svg"><img src="docs/media/icons/keyboard-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Buttons and macros</b><br>
-      <sub>Any action or key combination, or a macro recorded from the keyboard.</sub>
+      <sub>Eight buttons: any action, key combination or a macro recorded from the keyboard.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bullseye-arrow-light.svg">
-        <img src="docs/media/icons/bullseye-arrow-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bullseye-arrow-light.svg"><img src="docs/media/icons/bullseye-arrow-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Test</b><br>
-      <sub>Clicks and wheel steps counted, worn switches caught, the polling rate measured live.</sub>
+      <sub>Clicks counted, worn switches caught, the polling rate measured live.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/reload-light.svg">
-        <img src="docs/media/icons/reload-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/reload-light.svg"><img src="docs/media/icons/reload-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Apply, undo, go back</b><br>
-      <sub>Every write is read back before it counts, and every setup the mouse has had is kept.</sub>
+      <sub>Every write is read back before it counts, and every setup is kept.</sub>
     </td>
   </tr>
   <tr>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bookmarks-light.svg">
-        <img src="docs/media/icons/bookmarks-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bookmarks-light.svg"><img src="docs/media/icons/bookmarks-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Profiles</b><br>
-      <sub>Whole setups saved with an icon each, loaded in one click.</sub>
+      <sub>Whole setups, each with an icon, one click away.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/battery-charging-light.svg">
-        <img src="docs/media/icons/battery-charging-dark.svg" alt="" width="48" height="48">
-      </picture><br>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/battery-charging-light.svg"><img src="docs/media/icons/battery-charging-dark.svg" alt="" width="48" height="48"></picture><br>
       <b>Battery</b><br>
-      <sub>Its last week as a chart, and the days it has left.</sub>
+      <sub>The last week as a chart, and the days it has left.</sub>
     </td>
     <td width="33%" valign="top">
-      <picture>
-        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/radio-signal-light.svg">
-        <img src="docs/media/icons/radio-signal-dark.svg" alt="" width="48" height="48">
-      </picture><br>
-      <b>Three ways to connect</b><br>
-      <sub>The USB cable, the 2.4 GHz receiver or Bluetooth.</sub>
+      <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/radio-signal-light.svg"><img src="docs/media/icons/radio-signal-dark.svg" alt="" width="48" height="48"></picture><br>
+      <b>Cable, receiver, Bluetooth</b><br>
+      <sub>All three links, with polling up to 1000 Hz.</sub>
     </td>
   </tr>
 </table>
 
-Also polling rate, angle snap, ripple control, key response and sleep. It works offline once opened, in English and
-Spanish, dark and light.
+<sub>Also angle snap, ripple control, key response and sleep. Offline once opened, in English and Spanish, dark and light.</sub>
 
-## <a id="at-a-glance"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/eye-light.svg"><img src="docs/media/icons/eye-dark.svg" alt="" width="24" height="24"></picture> At a glance
-
-| | |
-| --- | --- |
-| **DPI** | 50 to 22,000, six levels, each with its own colour |
-| **Polling** | 125, 250, 500 or 1000 Hz (fixed over Bluetooth) |
-| **Connections** | USB cable, 2.4 GHz receiver, Bluetooth |
-| **Buttons** | Eight, wheel up and down included; actions, key combinations, macros of up to 17 steps |
-| **Browsers** | Chrome, Edge and Opera on Windows, macOS and Linux |
-| **Runs** | In the page, no install, no server; offline once opened |
-| **Languages** | English, Spanish |
-
-## <a id="safe-by-design"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/shield-light.svg"><img src="docs/media/icons/shield-dark.svg" alt="" width="24" height="24"></picture> Safe by design
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/shield-light.svg"><img src="docs/media/icons/shield-dark.svg" alt="" width="24" height="24"></picture> Safe by design
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/media/safety-light.png">
-  <img src="docs/media/safety-dark.png" alt="Pilotfish writes one setting over the cable, the receiver or Bluetooth, then reads it back from the X11 and compares. Every value is checked first, only settings are sent, a write counts once the mouse holds it, and nothing goes to a sleeping mouse over the receiver." width="100%">
+  <img src="docs/media/safety-dark.png" alt="Every value is checked first, only settings are sent, never firmware, each write is read back and compared, and nothing goes to a sleeping mouse over the receiver." width="100%">
 </picture>
 
-Pilotfish changes settings on a real device, so it is careful about how. It sends only the configuration reports the
-official software sends; there is no firmware update or bootloader code in it at all. The setup is backed up before every
-change, so any change can be taken back.
+It sends only the configuration reports the official software sends, with no firmware or bootloader code, and backs up
+the setup before every change.
 
-## <a id="use-it"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/play-light.svg"><img src="docs/media/icons/play-dark.svg" alt="" width="24" height="24"></picture> Use it
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/play-light.svg"><img src="docs/media/icons/play-dark.svg" alt="" width="24" height="24"></picture> Use it
 
-You need a desktop browser with WebHID: **Chrome, Edge or Opera**. Firefox and Safari don't support it.
-
-1. Connect the X11 with its cable or its 2.4 GHz receiver.
-2. Open [Pilotfish](https://pilotfish.vercel.app), press **Connect the mouse** and pick the X11 in the browser's list. From then on it connects on its own.
+1. Open [Pilotfish](https://pilotfish.vercel.app) in **Chrome, Edge or Opera** on a computer.
+2. Connect the X11 by cable or receiver, press **Connect the mouse** and pick it. Next time it connects on its own.
 3. Change what you like. Nothing is written until you press **Apply**.
 
 > [!IMPORTANT]
-> Close the official software while Pilotfish is open. Two programs talking to the mouse at once can confuse it until
-> it is plugged in again.
+> Close the official software first. Two programs talking to the mouse at once can confuse it until it is replugged.
 
 <details>
 <summary><b>Over Bluetooth</b></summary>
@@ -181,7 +122,9 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 </details>
 
-### <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/keyboard-light.svg"><img src="docs/media/icons/keyboard-dark.svg" alt="" width="24" height="24"></picture> Keyboard
+<details>
+<summary><b>Keyboard shortcuts</b></summary>
+<br>
 
 | Key | Does |
 | --- | --- |
@@ -191,17 +134,16 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 | <kbd>Esc</kbd> | Close a card, a drawer or Test |
 | <kbd>↑</kbd> <kbd>↓</kbd> on a level | Step its DPI; with <kbd>Shift</kbd>, ten steps |
 
-## <a id="development"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/code-light.svg"><img src="docs/media/icons/code-dark.svg" alt="" width="24" height="24"></picture> Development
+</details>
+
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/code-light.svg"><img src="docs/media/icons/code-dark.svg" alt="" width="24" height="24"></picture> Development
 
 ```sh
 npm install
-npm run dev     # http://localhost:5173
+npm run dev     # http://localhost:5173, or /?demo for a simulated mouse
 npm test        # protocol and backup tests, built from real USB captures
 npm run build   # dist/, with the offline service worker
 ```
-
-Open <http://localhost:5173/?demo> to run the whole interface against a simulated mouse, no hardware needed;
-`?demo=cable` and `?demo=bluetooth` pretend those links. The demo exists only in development builds.
 
 <details>
 <summary><b>How the code is laid out</b></summary>
@@ -221,14 +163,8 @@ Protocol changes need a test built from real bytes, captured from the official s
 
 </details>
 
-## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/users-light.svg"><img src="docs/media/icons/users-dark.svg" alt="" width="24" height="24"></picture> Credits
+---
 
-The mouse is an original illustration drawn for Pilotfish. Type: [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans)
-and [Doto](https://fonts.google.com/specimen/Doto). Icons: [Pixelarticons](https://pixelarticons.com).
-
-> [!NOTE]
-> Pilotfish is an independent project. It is not affiliated with or endorsed by Attack Shark.
-
-## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/script-text-light.svg"><img src="docs/media/icons/script-text-dark.svg" alt="" width="24" height="24"></picture> License
-
-[MIT](LICENSE). The bundled fonts keep their own license, the SIL Open Font License, which travels with them.
+<sub>The mouse is an original illustration. Type: [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans) and
+[Doto](https://fonts.google.com/specimen/Doto). Icons: [Pixelarticons](https://pixelarticons.com). [MIT](LICENSE) license;
+the bundled fonts keep the SIL Open Font License. Pilotfish is independent and not affiliated with Attack Shark.</sub>
