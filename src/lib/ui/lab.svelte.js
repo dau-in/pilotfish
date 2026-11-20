@@ -30,7 +30,6 @@ export function start(c) {
   addEventListener('mousedown', onDown);
   addEventListener('mouseup', onUp);
   addEventListener('auxclick', prevent);
-  addEventListener('contextmenu', onMenu);
   c.stin.addEventListener('wheel', onWheel, { passive: false });
   c.stin.addEventListener(RAW, onRaw);
   meter = setInterval(measure, 120);
@@ -42,7 +41,6 @@ export function stop() {
   removeEventListener('mousedown', onDown);
   removeEventListener('mouseup', onUp);
   removeEventListener('auxclick', prevent);
-  removeEventListener('contextmenu', onMenu);
   ctx.stin.removeEventListener('wheel', onWheel);
   ctx.stin.removeEventListener(RAW, onRaw);
   clearInterval(meter); cancelAnimationFrame(raf);
@@ -52,7 +50,6 @@ export function stop() {
 
 const inStage = t => ctx.stin.contains(t);
 const prevent = e => e.preventDefault();
-const onMenu = e => { if (inStage(e.target)) e.preventDefault(); };
 const press = (part, on) => ctx.faceTop().querySelectorAll(`[data-part="${part}"]`).forEach(el => el.classList.toggle('down', on));
 
 function onDown(e) {

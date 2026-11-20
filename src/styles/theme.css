@@ -56,7 +56,15 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--ground); color: var(--text); font: 400 13px/1.5 var(--f-text); overflow-x: hidden; transition: background-color 300ms ease-out, color 300ms ease-out; }
+/* It behaves as a tool, not a page: dragging a fader or the mouse never selects the words around it, nothing drags
+   away as an image, the window doesn't bounce or pull to refresh, and the pointer stays an arrow over labels. Only
+   fields keep their text cursor and selection. */
+html { overscroll-behavior: none; }
+body { background: var(--ground); color: var(--text); font: 400 13px/1.5 var(--f-text); overflow-x: hidden; transition: background-color 300ms ease-out, color 300ms ease-out;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; cursor: default; }
+:is(input, textarea, [contenteditable]) { -webkit-user-select: text; user-select: text; }
+:is(img, svg, a) { -webkit-user-drag: none; }
+:is(button, a, [role="slider"]) { touch-action: manipulation; }
 button, input, select { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
 h1, h2, h3, p { margin: 0; }
 svg.i { width: 16px; height: 16px; flex: none; display: block; }

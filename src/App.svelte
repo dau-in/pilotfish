@@ -72,9 +72,16 @@
       if (e.key === 'Enter' && e.ctrlKey && isDirty()) { e.preventDefault(); apply(); }
       if (e.key.toLowerCase() === 'z' && (e.ctrlKey || e.metaKey) && !e.shiftKey && studio.undo) { e.preventDefault(); undo(); }
     };
+    // The browser's own menu has nothing for a tool like this, and the right button is one of the mouse's buttons
+    // to try out; fields keep theirs, for pasting.
+    const onMenu = e => { if (!typing(e.target)) e.preventDefault(); };
+    // Leaving with changes not applied, or in the middle of writing one, asks first.
+    const onLeave = e => { if (studio.busy || (ready && isDirty())) { e.preventDefault(); e.returnValue = ''; } };
     addEventListener('keydown', onKey);
+    addEventListener('contextmenu', onMenu);
+    addEventListener('beforeunload', onLeave);
     autoConnect();
-    return () => removeEventListener('keydown', onKey);
+    return () => { removeEventListener('keydown', onKey); removeEventListener('contextmenu', onMenu); removeEventListener('beforeunload', onLeave); };
   });
 </script>
 
