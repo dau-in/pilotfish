@@ -49,4 +49,4 @@ These protect real hardware. Do not relax them without the maintainer's explicit
 
 ## Not in this repo
 
-Reverse-engineering notes, raw captures and probe scripts live outside the repository. Prefer the tests as the reference for byte layouts.
+Reverse-engineering notes, raw captures and probe scripts live outside the repository. `docs/protocol.md` is the public write-up; the tests are the reference for byte layouts.

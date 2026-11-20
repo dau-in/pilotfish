@@ -1,5 +1,5 @@
 // The X11 over WebHID: the cable (1D57:FA55) and the 2.4 GHz receiver (1D57:FA60). Same feature reports as the
-// official app, on the configuration collection (usage page 0x0B). See NOTAS.md for every byte.
+// official app, on the configuration collection (usage page 0x0B). See docs/protocol.md for every byte.
 import {
   MACRO_WEB_MAX_EVENTS, MouseError, REPORT, REQUEST_BUTTONS, REQUEST_PROFILE, REQUEST_VERSION, STATUS_READY,
   macroChunks, parseButtonReport, parseMacroHead, parseNotify, parseProfile, parseVersion, requestMacroHead,

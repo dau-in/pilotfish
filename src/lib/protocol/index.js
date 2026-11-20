@@ -1,6 +1,6 @@
 // Attack Shark X11 configuration protocol (feature reports on interface MI_02 / COL04).
 // Decoded from the official web driver and verified against traces of the official app;
-// see ../../NOTAS.md for the full write-up.
+// docs/protocol.md has the full write-up.
 
 // PAW3311 register values, indexed by DPI step. Indices 0..199 cover 50..10000 in steps of 50
 // (DPI-Y byte = 0); indices 200..219 cover 10100..12000 in steps of 100 (DPI-Y byte = 1).

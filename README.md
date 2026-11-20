@@ -145,6 +145,8 @@ npm test        # protocol and backup tests, built from real USB captures
 npm run build   # dist/, with the offline service worker
 ```
 
+The protocol, byte by byte, is in [docs/protocol.md](docs/protocol.md).
+
 <details>
 <summary><b>How the code is laid out</b></summary>
 <br>
