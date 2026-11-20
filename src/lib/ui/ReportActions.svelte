@@ -26,4 +26,5 @@
 <div class="reportacts">
   <button class="btn small icon-start" type="button" onclick={copy}><Icon name={copied ? 'check' : 'copy'} /><span aria-live="polite">{t(copied ? 'report.copied' : 'report.copy')}</span></button>
   {#if url}<a class="btn small icon-start" href={url} target="_blank" rel="noopener"><Icon name="github" />{t('report.issue')}</a>{/if}
+  <p class="hint">{t('report.private')}</p>
 </div>

@@ -371,3 +371,4 @@
 .reportacts .btn svg.i { width: 12px; height: 12px; }
 .state.err p, .btguide .warn p { margin: 0; }
 .drawer .reportacts { margin-top: 10px; }
+.reportacts .hint { flex-basis: 100%; margin: 2px 0 0; color: var(--muted); font-size: 11.5px; line-height: 16px; text-wrap: pretty; }
