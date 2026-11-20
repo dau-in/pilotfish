@@ -5,10 +5,10 @@
 
 <p align="center">
   <a href="#features">Features</a> ·
+  <a href="#at-a-glance">At a glance</a> ·
   <a href="#safe-by-design">Safe by design</a> ·
   <a href="#use-it">Use it</a> ·
-  <a href="#development">Development</a> ·
-  <a href="#license">License</a>
+  <a href="#development">Development</a>
 </p>
 
 Pilotfish is an open-source configurator for the **Attack Shark X11** wireless mouse. It runs in the browser and talks to
@@ -28,47 +28,121 @@ turn the mouse over to reach what is underneath.
 
 ## Features
 
-- **The mouse is the interface.** Every part has a callout that says what it does. Touch one to change it; drag the
-  mouse to turn it over and reach the DPI switch, the Mode switch, the sensor and the power switch.
-- **DPI levels** as faders or a dial, from 50 to 22,000. The sensor's own limit is marked, and so is the level the next
-  press of the DPI switch goes to.
-- **Buttons.** Common actions, any key or key combination pressed on your keyboard, or a macro recorded from the
-  keyboard, shown in time and played back before you save it.
-- **Lighting**, previewed live on the drawing and on the desk around it: steady, breathing, neon or by DPI level.
-- **Sensor and power.** Polling rate, angle snap, ripple control, key response and the sleep timer.
-- **Profiles** with an icon each, one per game or task.
-- **History.** Every setup your mouse has had is kept in the browser. Go back to any of them, undo the last change, or
-  export everything to a file.
-- **Test.** Every click and wheel step counted; a double-click detector for worn switches; the polling rate measured as
-  the reports arrive.
-- **Battery**, with the last week of readings and an estimate of the days left.
-- Works offline once opened. English and Spanish, dark and light.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-touch.webp" alt="Pointing at the wheel and touching the right button to give it a media action" width="100%"><br>
+      <b>The mouse is the interface</b><br>
+      <sub>Every part says what it does. Touch one to change it; an edit not on the mouse yet has a dashed leader.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-turn.webp" alt="Dragging the mouse across to turn it over and show its underside" width="100%"><br>
+      <b>Turned over by hand</b><br>
+      <sub>Drag it to look round it and reach the DPI switch, the Mode switch, the sensor and the power switch.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-dpi.webp" alt="Dragging two DPI levels on their faders" width="100%"><br>
+      <b>Six DPI levels</b><br>
+      <sub>Faders or a dial, 50 to 22,000. The sensor's own limit is hatched and the next press of the switch is marked.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-light.webp" alt="Switching the light between breathing, neon and steady, with the desk lit in its colour" width="100%"><br>
+      <b>Light, previewed</b><br>
+      <sub>Each effect plays on the drawing and on the desk around it before you apply it.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-test.webp" alt="Test mode counting clicks and drawing a dot for every report as the mouse moves" width="100%"><br>
+      <b>Test</b><br>
+      <sub>Clicks and wheel steps counted, worn switches caught double-clicking, the polling rate measured as it arrives.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/media/feature-history.webp" alt="Applying a change and opening the History with every setup the mouse has had" width="100%"><br>
+      <b>Apply, undo, go back</b><br>
+      <sub>Every write is read back before it counts. Every setup the mouse has had is kept, one click from coming back.</sub>
+    </td>
+  </tr>
+</table>
+
+Also: buttons as any action, key combination or a macro recorded from the keyboard; profiles with an icon each; the
+battery's last week and the days it has left; polling rate, angle snap, ripple control, key response and sleep. It works
+offline once opened, in English and Spanish, dark and light.
+
+## At a glance
+
+| | |
+| --- | --- |
+| **DPI** | 50 to 22,000, six levels, each with its own colour |
+| **Polling** | 125, 250, 500 or 1000 Hz (fixed over Bluetooth) |
+| **Connections** | USB cable, 2.4 GHz receiver, Bluetooth |
+| **Buttons** | Eight, wheel up and down included; actions, key combinations, macros of up to 17 steps |
+| **Browsers** | Chrome, Edge and Opera on Windows, macOS and Linux |
+| **Runs** | In the page, no install, no server; offline once opened |
+| **Languages** | English, Spanish |
 
 ## Safe by design
 
-Pilotfish changes settings on a real device, so it is careful about how:
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="docs/media/safety-light.png">
+  <img src="docs/media/safety-dark.png" alt="Pilotfish writes one setting over the cable, the receiver or Bluetooth, then reads it back from the X11 and compares. Every value is checked first, only settings are sent, a write counts once the mouse holds it, and nothing goes to a sleeping mouse over the receiver." width="100%">
+</picture>
 
-- **It never touches the firmware.** It sends only configuration reports, the same ones the official software sends.
-  There is no update or bootloader code in it at all.
-- **Every value is checked** against the mouse's limits before a packet is built, and every packet comes from one tested
-  module.
-- **Every write is read back** to confirm that the mouse kept it. If it didn't, Pilotfish says so instead of guessing.
-- **Over the receiver it only talks while the mouse is awake**, going by the battery heartbeat the mouse sends every two
-  seconds. Requests sent to a sleeping mouse can leave the receiver stuck until it is plugged in again.
-- **The setup is backed up before every change**, so any change can be taken back.
+Pilotfish changes settings on a real device, so it is careful about how. It sends only the configuration reports the
+official software sends; there is no firmware update or bootloader code in it at all. The setup is backed up before every
+change, so any change can be taken back.
 
 ## Use it
 
-You need a desktop browser with WebHID: **Chrome, Edge or Opera** on Windows, macOS or Linux. Firefox and Safari don't
-support it. Bluetooth works where Web Bluetooth does.
+You need a desktop browser with WebHID: **Chrome, Edge or Opera**. Firefox and Safari don't support it.
 
 1. Connect the X11 with its cable or its 2.4 GHz receiver.
-2. Open Pilotfish and press **Connect the mouse**, then pick the X11 in the browser's list. From then on it connects
-   on its own.
+2. Open Pilotfish, press **Connect the mouse** and pick the X11 in the browser's list. From then on it connects on its own.
 3. Change what you like. Nothing is written until you press **Apply**.
 
-Close the official software while Pilotfish is open: two programs talking to the mouse at once can confuse it. On Linux,
-Chrome needs permission to open the device; a udev rule for vendor `1d57` gives it.
+> [!IMPORTANT]
+> Close the official software while Pilotfish is open. Two programs talking to the mouse at once can confuse it until
+> it is plugged in again.
+
+<details>
+<summary><b>Over Bluetooth</b></summary>
+<br>
+
+1. Put the power switch on **Bluetooth** and hold the **Mode** button underneath for 3 seconds, until its light blinks fast.
+2. In Pilotfish press **Over Bluetooth**, then pick **X11mouse1** or **X11mouse2** in the browser's list. If your system
+   offers to connect it by itself, close that offer: the browser connects it.
+3. Allow the pairing if your system asks.
+
+If it isn't in the list, your system may have it paired already: remove it in the Bluetooth settings and start again.
+Browsers don't remember Bluetooth devices yet, so it is picked each time; the cable and the receiver connect on their own.
+
+</details>
+
+<details>
+<summary><b>On Linux</b></summary>
+<br>
+
+Chrome needs permission to open the mouse. Add a udev rule, then plug it in again:
+
+```sh
+echo 'KERNEL=="hidraw*", ATTRS{idVendor}=="1d57", ATTRS{idProduct}=="fa55|fa60", TAG+="uaccess"' \
+  | sudo tee /etc/udev/rules.d/70-pilotfish.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+</details>
+
+### Keyboard
+
+| Key | Does |
+| --- | --- |
+| <kbd>F</kbd> | Turn the mouse over |
+| <kbd>Ctrl</kbd> + <kbd>Enter</kbd> | Apply the changes |
+| <kbd>Ctrl</kbd> + <kbd>Z</kbd> | Undo the last change |
+| <kbd>Esc</kbd> | Close a card, a drawer or Test |
+| <kbd>↑</kbd> <kbd>↓</kbd> on a level | Step its DPI; with <kbd>Shift</kbd>, ten steps |
 
 ## Development
 
@@ -79,10 +153,14 @@ npm test        # protocol and backup tests, built from real USB captures
 npm run build   # dist/, with the offline service worker
 ```
 
-Open <http://localhost:5173/?demo> to run the whole interface against a simulated mouse, no hardware needed. The demo
-exists only in development builds.
+Open <http://localhost:5173/?demo> to run the whole interface against a simulated mouse, no hardware needed;
+`?demo=cable` and `?demo=bluetooth` pretend those links. The demo exists only in development builds.
 
-Pilotfish is a Svelte 5 + Vite app with no backend:
+<details>
+<summary><b>How the code is laid out</b></summary>
+<br>
+
+Pilotfish is a Svelte 5 + Vite app with no backend.
 
 | Path | What it holds |
 | --- | --- |
@@ -94,15 +172,15 @@ Pilotfish is a Svelte 5 + Vite app with no backend:
 
 Protocol changes need a test built from real bytes, captured from the official software or the mouse.
 
+</details>
+
 ## Credits
 
-Made by [dau-in](https://github.com/dau-in). The mouse is an original illustration drawn for Pilotfish. The
-interface is set in [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans) and
-[Doto](https://fonts.google.com/specimen/Doto), with [Pixelarticons](https://pixelarticons.com) for its icons; the credits
-card adds [Yuji Syuku](https://fonts.google.com/specimen/Yuji+Syuku) and
-[Noto Sans Math](https://fonts.google.com/noto/specimen/Noto+Sans+Math). All of them are open-source.
+The mouse is an original illustration drawn for Pilotfish. Type: [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans)
+and [Doto](https://fonts.google.com/specimen/Doto). Icons: [Pixelarticons](https://pixelarticons.com).
 
-Pilotfish is an independent project. It is not affiliated with or endorsed by Attack Shark.
+> [!NOTE]
+> Pilotfish is an independent project. It is not affiliated with or endorsed by Attack Shark.
 
 ## License
 
