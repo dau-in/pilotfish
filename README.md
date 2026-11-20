@@ -19,14 +19,14 @@ your settings go from the page to the mouse and nowhere else.
   <img src="docs/media/demo.webp" alt="A tour of Pilotfish: pointing at the mouse's parts, changing its light, dragging a DPI level, turning the mouse over and testing its buttons" width="100%">
 </p>
 
-## Why
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/heart-light.svg"><img src="docs/media/icons/heart-dark.svg" alt="" width="24" height="24"></picture> Why
 
 The X11 was my first gaming mouse, and I love it. Its official software is another story: it looks dated, it is hard to
 find your way around, and even working out how a macro works takes guesswork. So I reverse-engineered the protocol and
 made the app I wanted: the mouse itself is the interface. Point at a part to see what it does, touch it to change it, and
 turn the mouse over to reach what is underneath.
 
-## Features
+## <a id="features"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/zap-light.svg"><img src="docs/media/icons/zap-dark.svg" alt="" width="24" height="24"></picture> Features
 
 <table>
   <tr>
@@ -112,7 +112,7 @@ turn the mouse over to reach what is underneath.
 Also polling rate, angle snap, ripple control, key response and sleep. It works offline once opened, in English and
 Spanish, dark and light.
 
-## At a glance
+## <a id="at-a-glance"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/eye-light.svg"><img src="docs/media/icons/eye-dark.svg" alt="" width="24" height="24"></picture> At a glance
 
 | | |
 | --- | --- |
@@ -124,7 +124,7 @@ Spanish, dark and light.
 | **Runs** | In the page, no install, no server; offline once opened |
 | **Languages** | English, Spanish |
 
-## Safe by design
+## <a id="safe-by-design"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/shield-light.svg"><img src="docs/media/icons/shield-dark.svg" alt="" width="24" height="24"></picture> Safe by design
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/media/safety-light.png">
@@ -135,7 +135,7 @@ Pilotfish changes settings on a real device, so it is careful about how. It send
 official software sends; there is no firmware update or bootloader code in it at all. The setup is backed up before every
 change, so any change can be taken back.
 
-## Use it
+## <a id="use-it"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/play-light.svg"><img src="docs/media/icons/play-dark.svg" alt="" width="24" height="24"></picture> Use it
 
 You need a desktop browser with WebHID: **Chrome, Edge or Opera**. Firefox and Safari don't support it.
 
@@ -175,7 +175,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 
 </details>
 
-### Keyboard
+### <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/keyboard-light.svg"><img src="docs/media/icons/keyboard-dark.svg" alt="" width="24" height="24"></picture> Keyboard
 
 | Key | Does |
 | --- | --- |
@@ -185,7 +185,7 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 | <kbd>Esc</kbd> | Close a card, a drawer or Test |
 | <kbd>↑</kbd> <kbd>↓</kbd> on a level | Step its DPI; with <kbd>Shift</kbd>, ten steps |
 
-## Development
+## <a id="development"></a><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/code-light.svg"><img src="docs/media/icons/code-dark.svg" alt="" width="24" height="24"></picture> Development
 
 ```sh
 npm install
@@ -215,7 +215,7 @@ Protocol changes need a test built from real bytes, captured from the official s
 
 </details>
 
-## Credits
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/users-light.svg"><img src="docs/media/icons/users-dark.svg" alt="" width="24" height="24"></picture> Credits
 
 The mouse is an original illustration drawn for Pilotfish. Type: [Instrument Sans](https://fonts.google.com/specimen/Instrument+Sans)
 and [Doto](https://fonts.google.com/specimen/Doto). Icons: [Pixelarticons](https://pixelarticons.com).
@@ -223,6 +223,6 @@ and [Doto](https://fonts.google.com/specimen/Doto). Icons: [Pixelarticons](https
 > [!NOTE]
 > Pilotfish is an independent project. It is not affiliated with or endorsed by Attack Shark.
 
-## License
+## <picture><source media="(prefers-color-scheme: light)" srcset="docs/media/icons/script-text-light.svg"><img src="docs/media/icons/script-text-dark.svg" alt="" width="24" height="24"></picture> License
 
 [MIT](LICENSE). The bundled fonts keep their own license, the SIL Open Font License, which travels with them.
