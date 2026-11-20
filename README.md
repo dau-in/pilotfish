@@ -8,10 +8,13 @@
 </p>
 
 <p align="center">
-  <a href="#features"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/features-light.png"><img src="docs/media/cards/features-dark.png" alt="Features" width="190"></picture></a>
-  <a href="#safe-by-design"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/safety-light.png"><img src="docs/media/cards/safety-dark.png" alt="Safe by design" width="190"></picture></a>
-  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/use-light.png"><img src="docs/media/cards/use-dark.png" alt="Use it" width="190"></picture></a>
-  <a href="#development"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/cards/dev-light.png"><img src="docs/media/cards/dev-dark.png" alt="Development" width="190"></picture></a>
+  <a href="LICENSE"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/license-light.png"><img src="docs/media/badges/license-dark.png" alt="License: MIT" height="28" width="106"></picture></a>
+  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/browsers-light.png"><img src="docs/media/badges/browsers-dark.png" alt="Browsers: Chrome, Edge, Opera" height="28" width="231"></picture></a>
+  <a href="#use-it"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/links-light.png"><img src="docs/media/badges/links-dark.png" alt="Connects: USB, 2.4 GHz, Bluetooth" height="28" width="244"></picture></a>
+  <br>
+  <a href="https://pilotfish.vercel.app"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/runs-light.png"><img src="docs/media/badges/runs-dark.png" alt="Runs in the page, offline" height="28" width="184"></picture></a>
+  <a href="#development"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/stack-light.png"><img src="docs/media/badges/stack-dark.png" alt="Built with Svelte 5 and WebHID" height="28" width="210"></picture></a>
+  <a href="test"><picture><source media="(prefers-color-scheme: light)" srcset="docs/media/badges/tests-light.png"><img src="docs/media/badges/tests-dark.png" alt="Tested on real USB captures" height="28" width="201"></picture></a>
 </p>
 
 Pilotfish is an open-source configurator for the **Attack Shark X11** wireless mouse. It runs in the browser and talks to
