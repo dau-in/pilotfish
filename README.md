@@ -3,6 +3,8 @@
   <img src="docs/media/banner-dark.png" alt="Pilotfish: the Attack Shark X11, set up from your browser" width="100%">
 </picture>
 
+<h3 align="center"><a href="https://pilotfish.vercel.app">Open Pilotfish →</a></h3>
+
 <p align="center">
   <a href="#features">Features</a> ·
   <a href="#at-a-glance">At a glance</a> ·
@@ -140,7 +142,7 @@ change, so any change can be taken back.
 You need a desktop browser with WebHID: **Chrome, Edge or Opera**. Firefox and Safari don't support it.
 
 1. Connect the X11 with its cable or its 2.4 GHz receiver.
-2. Open Pilotfish, press **Connect the mouse** and pick the X11 in the browser's list. From then on it connects on its own.
+2. Open [Pilotfish](https://pilotfish.vercel.app), press **Connect the mouse** and pick the X11 in the browser's list. From then on it connects on its own.
 3. Change what you like. Nothing is written until you press **Apply**.
 
 > [!IMPORTANT]
