@@ -22,6 +22,8 @@ export class DemoLink {
   }
   // The battery report a real one sends every ~2 s through the receiver; on the cable it is charging.
   async open(onNotice) {
+    // In the console, __pilotfishDemo.sleep() and .wake() stop and resume the heartbeat, as a mouse falling asleep.
+    window.__pilotfishDemo = { sleep: () => clearInterval(this.#beats), wake: () => { clearInterval(this.#beats); beat(); this.#beats = setInterval(beat, 2000); } };
     const beat = () => onNotice({ battery: this.kind === 'cable' ? { state: 'charging', level: 86 } : { state: 'battery', level: 86 } });
     setTimeout(beat, 300);
     this.#beats = setInterval(beat, 2000);

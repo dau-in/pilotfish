@@ -12,7 +12,6 @@
 .band h2 { font-size: 16px; line-height: 1.3; }
 .band .sub { color: var(--muted); font-size: 12px; line-height: 17px; margin-top: 2px; text-wrap: pretty; }
 .inst { position: relative; width: 100%; }
-[data-lv]:not(.chg) > .modd { display: none; }
 
 /* The DPI dock and the click log share one place and cross-fade; the dock keeps the taller one's height. */
 .band > .bleft { grid-column: 1; grid-row: 1; }
@@ -99,7 +98,6 @@
 .fader:hover .fhandle, .fader.drag .fhandle, .fader.sel .fhandle { scale: 1.12; }
 .fn { position: relative; font-size: 11.5px; line-height: 22px; color: var(--muted); }
 .fader.next .fn::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--acc); }
-.fader .modd { position: absolute; top: 4px; right: 4px; }
 
 /* ---------- Dial: a gauge. Each level is a mark on the arc; the needle points at the one in use ---------- */
 .band[data-dpi="dial"] .inst { height: 164px; }
@@ -127,7 +125,6 @@
 .drow.active { color: var(--text); background: var(--raised); }
 .drow.next small .nx { color: var(--acc); }
 .drow.sel { box-shadow: inset 0 0 0 1px var(--acc); }
-.drow .modd { position: absolute; top: 6px; right: 6px; }
 
 /* ---------- Desktop: the instrument shares the dock's grid ---------- */
 .bsep, .fkey { display: none; }
@@ -232,3 +229,22 @@
   .fhandle::after { left: 4px; right: 4px; }
   .band { padding-inline: 12px; }
 }
+
+/* ---------- A level edited but not on the mouse yet ----------
+   An outline of the handle stays where the mouse has it, so the edit reads as a distance. While the level is written
+   it breathes; once the mouse reads the new value back it glides up or down to meet the handle and goes. Discarding
+   sends the handle back down to it instead. */
+.fghost { position: absolute; left: 50%; bottom: calc(var(--ti) + var(--g) * (100% - 2 * var(--ti))); width: 30px; height: 12px; translate: -50% 50%; pointer-events: none; opacity: 0;
+  transition: bottom 420ms var(--ease), opacity 260ms ease-out 380ms; }
+.fghost::before { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px var(--line);
+  clip-path: polygon(2px 0, calc(100% - 2px) 0, calc(100% - 2px) 2px, 100% 2px, 100% calc(100% - 2px), calc(100% - 2px) calc(100% - 2px), calc(100% - 2px) 100%,
+    2px 100%, 2px calc(100% - 2px), 0 calc(100% - 2px), 0 2px, 2px 2px); }
+.fghost.on { opacity: 1; transition: bottom 420ms var(--ease), opacity 200ms ease-out; }
+@media (prefers-reduced-motion: no-preference) { .fghost.writing { animation: ghost-breathe 900ms ease-in-out infinite; } }
+@keyframes ghost-breathe { 50% { opacity: .35; } }
+@media (max-width: 739px) { .fghost { width: 26px; } }
+@media (max-width: 379px) { .fghost { width: 20px; } }
+.dghost { transform-origin: 120px 104px; opacity: 0; pointer-events: none; transition: rotate 420ms var(--ease), opacity 260ms ease-out 380ms; }
+.dghost rect { fill: none; stroke: var(--line); stroke-width: 1; }
+.dghost.on { opacity: 1; transition: rotate 420ms var(--ease), opacity 200ms ease-out; }
+@media (prefers-reduced-motion: no-preference) { .dghost.writing { animation: ghost-breathe 900ms ease-in-out infinite; } }

@@ -27,6 +27,13 @@
     if (!mouse.beatAt || !sig || kind !== 'dongle' || reduced()) return;
     sig.classList.remove('pulse'); void sig.getBoundingClientRect(); sig.classList.add('pulse');
   });
+  // Waking up: the capsule takes the link back with a beat of the accent.
+  let wasAsleep = false;
+  $effect(() => {
+    const asleep = mouse.asleep;
+    if (wasAsleep && !asleep && capsule && !reduced()) { capsule.classList.remove('relink'); void capsule.offsetWidth; capsule.classList.add('relink'); }
+    wasAsleep = asleep;
+  });
   // A new link: the capsule takes it with a beat of the accent.
   let capsule = $state(), lastKind = null;
   $effect(() => {
@@ -84,7 +91,9 @@
   <div class="right">
     {#if ready}
       <div class="slot" class:err={note?.key === 'failed'} role="status">
-        {#if studio.busy}
+        {#if studio.busy && mouse.waiting}
+          <span><b>{t('slot.waiting')}</b><span class="long">{t('slot.waitingLong')}</span></span>
+        {:else if studio.busy}
           <span><b>{t('slot.writing')}</b><span class="long"> {t('slot.what', studio.progress ?? {})}</span></span>
         {:else if dirty}
           {#if note?.key === 'failed'}
@@ -102,7 +111,7 @@
       <div class="wrap capsule-wrap">
         <button class="capsule" type="button" bind:this={capsule} aria-haspopup="dialog" aria-expanded={view.pop === 'status'} onclick={() => togglePop('status')}
           aria-label={t('capsule.aria', { link: t(`link.short.${kind}`), asleep: mouse.asleep, level: bat?.level })}>
-          <span class="lk"><svg class="ig" class:asleep={mouse.asleep} class:steady={!mouse.asleep && kind !== 'dongle'} bind:this={sig} viewBox="0 0 24 24" aria-hidden="true">{@html GLYPH[kind]}</svg><span>{t(`link.short.${kind}`)}</span></span>
+          <span class="lk"><svg class="ig" class:asleep={mouse.asleep} class:steady={!mouse.asleep && kind !== 'dongle'} bind:this={sig} viewBox="0 0 24 24" aria-hidden="true">{@html GLYPH[kind]}</svg><span>{mouse.asleep ? t('link.asleep') : t(`link.short.${kind}`)}</span></span>
           {#if bat}
             <span class="sep"></span>
             <span class="bt"><svg class="bat" class:low={bat.state === 'battery' && bat.level <= 15} class:charging={bat.state !== 'battery'} viewBox="0 0 26 13" aria-hidden="true">

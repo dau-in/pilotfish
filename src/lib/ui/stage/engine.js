@@ -106,11 +106,27 @@ export function createStage(els, ctx) {
       }
     }
   }
+  // Each leader keeps its elements, so a change of state (edited, writing, confirmed) can animate on them.
+  const leaders = new Map();
+  const NS = 'http://www.w3.org/2000/svg';
+  function leader(id) {
+    let l = leaders.get(id);
+    if (!l) {
+      const make = (tag, cls) => { const e = document.createElementNS(NS, tag); e.setAttribute('class', cls); lines.append(e); return e; };
+      l = { halo: make('path', 'halo2'), ln: make('path', 'ln'), dot: make('circle', 'dot') };
+      l.dot.setAttribute('r', '3.5');
+      leaders.set(id, l);
+    }
+    return l;
+  }
   function drawLines() {
-    if (listMode() || !box.h) { lines.innerHTML = ''; return; }
+    const shown = new Set();
+    if (!listMode() && box.h) placeLeaders(shown);
+    for (const [id, l] of leaders) if (!shown.has(id)) { l.halo.remove(); l.ln.remove(); l.dot.remove(); leaders.delete(id); }
+  }
+  function placeLeaders(shown) {
     const k = box.h / 1523, sr = stin.getBoundingClientRect();
     const openId = view.open?.kind === 'part' ? view.open.id : null;
-    let out = '';
     for (const id of FACE_ORDER[view.face]) {
       const p = PARTS[id];
       // A callout hidden behind an open card keeps no leader; the open part's leader runs to the card instead.
@@ -130,10 +146,15 @@ export function createStage(els, ctx) {
       const ax = box.x + ANCHOR[id][0] * k, ay = box.y + ANCHOR[id][1] * k;
       const knee = left ? box.x - 18 : box.x + box.w + 18;
       const d = (left ? x1 < knee : x1 > knee) ? `M${x1} ${y}H${knee}L${ax} ${ay}` : `M${x1} ${y}L${ax} ${ay}`;
-      const cls = id === openId ? 'on' : openId ? 'dim' : id === view.hover ? 'hl' : '';
-      out += `<path class="halo2 ${cls}" d="${d}"/><path class="ln ${cls}" d="${d}"/><circle class="dot ${cls}" cx="${ax}" cy="${ay}" r="3.5"/>`;
+      // A part edited but not on the mouse yet has a dashed leader: not connected. While its report is written the
+      // dashes run towards the part; once the mouse reads back the new value the gaps close.
+      const cls = [id === openId ? 'on' : openId ? 'dim' : id === view.hover ? 'hl' : '', ctx.pending?.(id) ?? ''].join(' ');
+      const l = leader(id);
+      shown.add(id);
+      for (const e of [l.halo, l.ln]) e.setAttribute('d', d);
+      l.halo.setAttribute('class', `halo2 ${cls}`); l.ln.setAttribute('class', `ln ${cls}`); l.dot.setAttribute('class', `dot ${cls}`);
+      l.dot.setAttribute('cx', ax); l.dot.setAttribute('cy', ay);
     }
-    lines.innerHTML = out;
   }
   // The part under the pointer, or whose callout it is on, lights on the drawing too.
   function setHoverMarks() {

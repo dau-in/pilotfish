@@ -33,6 +33,9 @@
   }
   const label = id => t(`part.${id}`);
 
+  // A part edited but not on the mouse yet, and whether its report is being written now.
+  const pending = id => (!changedPart(id, d, p) ? '' : studio.busy ? 'chg writing' : 'chg');
+
   /* ---------- The engine ---------- */
   const area = () => {
     const H = stin.clientHeight;
@@ -41,7 +44,7 @@
   };
   onMount(() => {
     engine = createStage({ stage, stin, mouse: mouseEl, faceTop, faceUnder, turnCv, lines, callouts, card, shadow, halo, pool, orbit, turnbtn }, {
-      shell: () => prefs.shell, link: () => mouse.kind, led: () => led, area, label: f => t(f === 'top' ? 'render.top' : 'render.under'),
+      shell: () => prefs.shell, link: () => mouse.kind, led: () => led, area, pending, label: f => t(f === 'top' ? 'render.top' : 'render.under'),
     });
     engine.drawFaces();
     engine.layout();
@@ -84,7 +87,7 @@
     if (!engine) return;
     // Everything the placement depends on.
     view.face; view.open; view.testing; ready; i18n.lang;
-    if (d) { JSON.stringify(d); }
+    if (d) { JSON.stringify(d); JSON.stringify(mouse.profile); studio.busy; }
     if (view.testing) { JSON.stringify(lab.btn); lab.wheel.up; lab.wheel.down; }
     tick().then(() => { engine.placeCallouts(); engine.placeCard(i => document.querySelector(`.band [data-lv="${i}"]`)); engine.drawLines(); });
   });
@@ -143,7 +146,7 @@
   {#if c.n != null}<span class="dot">{c.n}</span> {c.u}{:else}{c.v}{/if}
 {/snippet}
 
-<main class="stage" bind:this={stage} data-light={light} data-face="top">
+<main class="stage" bind:this={stage} data-light={light} data-asleep={ready && mouse.asleep} data-face="top">
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (each part has its callout, a button) -->
   <div class="stage-in" bind:this={stin} onclick={onClick} onpointermove={onHover} onpointerleave={() => (view.hover = null)}>
     <div class="desk"></div>
@@ -164,7 +167,7 @@
             aria-label={t('callout.aria', { part: label(id), does: plain(c) })} onfocus={() => (view.hover = id)} onblur={() => (view.hover = null)}>
             <span class="face2 cfg">
               <small>{label(id)}</small>
-              <span class="v disp">{#if changedPart(id, d, p)}<i class="mod" title={t('mod.title')}></i>{/if}{@render value(c)}</span>
+              <span class="v disp">{@render value(c)}</span>
             </span>
             {#if view.face === 'top'}
               <span class="face2 tst">

@@ -205,7 +205,7 @@
             <button class="fader" class:active={s.active} class:next={s.next} class:sel={s.sel} class:chg={s.chg} class:drag={s.drag} type="button" data-lv={i}
               style:--n={i} style:--c={l.color} style:--f={posR(l.dpi).toFixed(4)} {...aria(i, l)}
               onpointerdown={e => down(e, i)} onkeydown={e => key(e, i)} use:wheelable={i}>
-              <span class="fv dot">{l.dpi}</span><span class="ftrack"><i class="ffill"></i><i class="fhandle"></i></span><span class="fn">{i + 1}</span><i class="mod modd"></i>
+              <span class="fv dot">{l.dpi}</span><span class="ftrack"><i class="ffill"></i><i class="fghost" class:on={s.chg} class:writing={s.chg && studio.busy} style:--g={posR(p.levels[i].dpi).toFixed(4)}></i><i class="fhandle"></i></span><span class="fn">{i + 1}</span>
             </button>
           {/each}
         </div>
@@ -226,6 +226,11 @@
               {#if k.major}<text class="dl fig" x={k.tx.toFixed(1)} y={k.ty.toFixed(1)} text-anchor="middle">{k.label}</text>{/if}
             {/each}
             <g class="needle" style:rotate="{(90 - aa).toFixed(2)}deg"><path d="M120 104L120 36" /><circle cx="120" cy="104" r="7" /></g>
+            <!-- Where the mouse has a level edited here: an outline on the arc, as the faders' ghost. -->
+            {#each d.levels as l, i (i)}
+              {@const s = lvState(i)}
+              <g class="dghost" class:on={s.chg} class:writing={s.chg && studio.busy} style:rotate="{(90 - ang(p.levels[i].dpi)).toFixed(2)}deg"><rect x="111" y="16.5" width="18" height="7" rx="1.5" /></g>
+            {/each}
             {#each d.levels as l, i (i)}
               {@const a = ang(l.dpi)}
               {@const [x, y] = pt(a, 84)}
@@ -239,7 +244,7 @@
               {@const s = lvState(i)}
               <button class="drow" class:active={s.active} class:next={s.next} class:sel={s.sel} class:chg={s.chg} type="button" data-lv={i} style:--n={i} style:--c={l.color} {...aria(i, l)}
                 onpointerdown={e => down(e, i)} onkeydown={e => key(e, i)} use:wheelable={i}>
-                <i class="pill"></i><span class="dv dot">{l.dpi}</span><small>{i + 1}{#if s.next}<span class="nx">{t('band.nextShort')}</span>{/if}</small><i class="mod modd"></i>
+                <i class="pill"></i><span class="dv dot">{l.dpi}</span><small>{i + 1}{#if s.next}<span class="nx">{t('band.nextShort')}</span>{/if}</small>
               </button>
             {/each}
           </div>

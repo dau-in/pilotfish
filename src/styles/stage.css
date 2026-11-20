@@ -93,9 +93,19 @@
 
 /* ---------- Callouts: what each part does, like the callouts of a manual, joined to the part by a leader ---------- */
 .lines { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; overflow: visible; transition: opacity 200ms ease-out; }
-.lines .ln { fill: none; stroke: var(--line); stroke-width: 1; opacity: .75; transition: stroke 150ms ease-out, opacity 200ms ease-out; }
-.lines .halo2 { fill: none; stroke: var(--line-halo); stroke-width: 3; transition: opacity 200ms ease-out; }
-.lines .dot { fill: var(--soft); stroke: var(--line-halo); stroke-width: 2; transition: fill 150ms ease-out, opacity 200ms ease-out; }
+.lines .ln { fill: none; stroke: var(--line); stroke-width: 1; opacity: .75; stroke-dasharray: 7 0;
+  transition: stroke 150ms ease-out, opacity 200ms ease-out, stroke-dasharray 520ms var(--ease); }
+.lines .halo2 { fill: none; stroke: var(--line-halo); stroke-width: 3; stroke-dasharray: 7 0; transition: opacity 200ms ease-out, stroke-dasharray 520ms var(--ease); }
+.lines .dot { fill: var(--soft); stroke: var(--line-halo); stroke-width: 2; transition: fill 300ms ease-out, stroke 300ms ease-out, opacity 200ms ease-out; }
+/* Edited, not on the mouse yet: the leader is dashed and its end is hollow, not connected to the part. While its
+   report is written the dashes run towards the part in the accent; when the mouse reads the value back, the gaps
+   close and the end fills, one part after another as each report is confirmed. */
+.lines .chg:is(.ln, .halo2) { stroke-dasharray: 2 5; }
+.lines .chg.dot { fill: var(--ground); stroke: var(--soft); stroke-width: 1.5; }
+.lines .writing.ln { stroke: var(--acc); opacity: 1; }
+.lines .writing.dot { stroke: var(--acc); }
+@media (prefers-reduced-motion: no-preference) { .lines .writing:is(.ln, .halo2) { animation: flow 560ms linear infinite; } }
+@keyframes flow { to { stroke-dashoffset: -7; } }
 .lines .hl.ln { stroke: var(--soft); opacity: 1; }
 .lines .on.ln { stroke: var(--acc); stroke-width: 1.5; opacity: 1; }
 .lines .on.dot { fill: var(--acc); }
@@ -291,3 +301,10 @@
   .prt b { font-size: 14.5px; line-height: 1.3; }
   .prt .sub { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 }
+
+/* ---------- Asleep: the LED goes out, as on the mouse, and the light on the desk fades with it ---------- */
+.x11 .led-chip { transition: fill 1s ease-out; }
+.glow { transition: opacity 1.2s ease-out; }
+.stage[data-asleep="true"] .glow { opacity: 0; animation: none; }
+.stage[data-asleep="true"] .x11 .led-chip { fill: #2c2c31; animation: none; }
+.stage[data-asleep="true"] .x11 :is(.led-glow, .led-core) { opacity: 0; animation: none; transition-duration: 1s; }

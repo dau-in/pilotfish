@@ -24,6 +24,7 @@ export const mouse = $state({
   maxMacroSteps: 0,
   asleep: false,  // over the receiver: no heartbeat lately, so nothing is sent until it wakes
   beatAt: 0,      // the last heartbeat, so the screen can pulse with it
+  waiting: false, // a change is waiting for the mouse to wake before it is sent
 });
 
 let link = null;
@@ -209,7 +210,11 @@ const CONFIRM_LOOKS = 3;
 const CONFIRM_GAP_MS = 800;
 async function write(build) {
   if (!link || mouse.status !== 'ready') throw new MouseError('notConnected');
-  await untilLinked(10000);
+  // Asleep, the change waits for the mouse to come back, for a minute at most; the screen says so meanwhile.
+  if (!linked()) {
+    mouse.waiting = true;
+    try { await untilLinked(60000); } finally { mouse.waiting = false; }
+  }
   const packet = build(await ask(() => link.readProfile()));
   for (let send = 0; send < 2; send++) {
     await link.write(packet);
