@@ -4,6 +4,7 @@
   import { t } from './lib/i18n/index.svelte.js';
   import { dataUrl, glyph, tile } from './lib/art/mark.js';
   import Band from './lib/ui/Band.svelte';
+  import BluetoothGuide from './lib/ui/BluetoothGuide.svelte';
   import Drawer from './lib/ui/Drawer.svelte';
   import FirstRun from './lib/ui/FirstRun.svelte';
   import Header from './lib/ui/Header.svelte';
@@ -62,6 +63,7 @@
       if (e.defaultPrevented) return;
       if (e.key === 'Escape') {
         if (view.welcome) view.welcome = false;
+        else if (view.btGuide) view.btGuide = false;
         else if (view.drawer) view.drawer = null;
         else if (view.pop) view.pop = null;
         else if (view.open) closeCard();
@@ -94,4 +96,4 @@
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (Escape closes them) -->
 <div class="scrim" class:on={view.drawer || (view.open && ready && narrow.current)} onclick={() => { if (view.drawer) view.drawer = null; else closeCard(); }}></div>
 <Drawer {ready} />
-{#if ready}<FirstRun {markSrc} />{/if}
+{#if ready}<FirstRun {markSrc} />{:else}<BluetoothGuide />{/if}

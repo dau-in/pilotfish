@@ -2,7 +2,7 @@
   // The dock: the six DPI levels, as faders or a dial (the user's choice), the level in use on a display of dots,
   // and in Test the click log. Without a mouse it asks for one.
   import { untrack } from 'svelte';
-  import { connectBluetooth, connectUsb, mouse, support } from '../device/mouse.svelte.js';
+  import { connectUsb, mouse, support } from '../device/mouse.svelte.js';
   import { errorText, fmt, t } from '../i18n/index.svelte.js';
   import { DPI_MAX, DPI_MIN } from '../protocol/index.js';
   import { ROWS, faults, lab } from './lab.svelte.js';
@@ -174,7 +174,7 @@
     {#if !unsupported}
       <div class="acts">
         <button class="btn go" type="button" disabled={busy || !support.hid || mouse.status === 'connecting'} onclick={() => go(connectUsb)}>{t('welcome.cableButton')}</button>
-        <button class="btn" type="button" disabled={busy || !support.bluetooth || mouse.status === 'connecting'} title={t('welcome.btBody')} onclick={() => go(connectBluetooth)}>{t('welcome.btButton')}</button>
+        <button class="btn" type="button" disabled={busy || !support.bluetooth || mouse.status === 'connecting'} onclick={() => (view.btGuide = true)}>{t('welcome.btButton')}</button>
       </div>
     {/if}
     {#if mouse.status === 'connecting'}<p class="state">{t(mouse.asleep ? 'welcome.asleep' : 'welcome.reading')}</p>

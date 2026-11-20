@@ -11,6 +11,7 @@ export const view = $state({
   drawer: null,     // history | settings
   pop: null,        // profiles | status
   welcome: false,   // the first-run sheet
+  btGuide: false,   // the steps for connecting over Bluetooth
   dock: 0,          // the DPI dock's height, which the mouse and its callouts stay clear of
 });
 

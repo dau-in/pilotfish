@@ -355,3 +355,12 @@
   .capsule { gap: 9px; padding: 0 11px 0 9px; }
 }
 @media (max-width: 379px) { .capsule .lk > span, .slot .long { display: none; } }
+
+/* ---------- Bluetooth: the steps, before the browser's list ---------- */
+.btguide .btmark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--r); background: var(--raised); color: var(--acc); }
+.btguide .steps { display: grid; gap: 12px; margin: 18px 0 4px; padding: 0; list-style: none; }
+.btguide .steps li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: baseline; color: var(--soft); line-height: 19px; text-wrap: pretty; }
+.btguide .steps b { color: var(--text); font-weight: 600; }
+.btguide .n { display: grid; place-items: center; width: 22px; height: 22px; border-radius: var(--r); background: var(--well); box-shadow: var(--ring); color: var(--acc); }
+.btguide .warn { margin-top: 12px; }
+.btguide .wgo { gap: 8px; }
