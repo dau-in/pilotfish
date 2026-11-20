@@ -55,10 +55,16 @@ export class HidLink {
     return next;
   }
 
+  // When the system refuses the report the browser only says "Failed to write the feature report". Not reproduced
+  // yet (first seen on another owner's X11, 2026-11-20); the likely causes are a mouse that is off or on Bluetooth
+  // behind the receiver, or another program holding it. So the screen says what to check; the console keeps the rest.
   async #send(packet, attempts = 4) {
     for (let i = 1; ; i++) {
       try { return await this.#device.sendFeatureReport(packet[0], Uint8Array.from(packet.slice(1))); } catch (err) {
-        if (i >= attempts) throw err;
+        if (i >= attempts) {
+          console.warn('Pilotfish: sendFeatureReport failed', this.kind, err);
+          throw new MouseError('sendFailed', { kind: this.kind });
+        }
         await sleep(120);
       }
     }

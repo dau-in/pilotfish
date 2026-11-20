@@ -16,7 +16,8 @@ function offline() {
     generateBundle(_, bundle) {
       const pub = listFiles('public').map(f => relative('public', f).replaceAll('\\', '/'));
       const files = ['/', ...Object.keys(bundle), ...pub].map(f => (f.startsWith('/') ? f : `/${f}`))
-        .filter(f => !f.endsWith('.woff')); // the woff2 copies are the ones browsers that run this app load
+        // The woff2 copies are the ones browsers that run this app load; og.png is only for link previews.
+        .filter(f => !f.endsWith('.woff') && f !== '/og.png');
       const version = createHash('sha256').update(files.join('\n')).digest('hex').slice(0, 12);
       this.emitFile({
         type: 'asset',
