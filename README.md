@@ -30,46 +30,87 @@ turn the mouse over to reach what is underneath.
 
 <table>
   <tr>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-touch.webp" alt="Pointing at the wheel and touching the right button to give it a media action" width="100%"><br>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/mouse-light.svg">
+        <img src="docs/media/icons/mouse-dark.svg" alt="" width="48" height="48">
+      </picture><br>
       <b>The mouse is the interface</b><br>
-      <sub>Every part says what it does. Touch one to change it; an edit not on the mouse yet has a dashed leader.</sub>
+      <sub>Every part says what it does. Touch one to change it, or turn the mouse over by hand to reach what is underneath.</sub>
     </td>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-turn.webp" alt="Dragging the mouse across to turn it over and show its underside" width="100%"><br>
-      <b>Turned over by hand</b><br>
-      <sub>Drag it to look round it and reach the DPI switch, the Mode switch, the sensor and the power switch.</sub>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-dpi.webp" alt="Dragging two DPI levels on their faders" width="100%"><br>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/sliders-light.svg">
+        <img src="docs/media/icons/sliders-dark.svg" alt="" width="48" height="48">
+      </picture><br>
       <b>Six DPI levels</b><br>
-      <sub>Faders or a dial, 50 to 22,000. The sensor's own limit is hatched and the next press of the switch is marked.</sub>
+      <sub>Faders or a dial, 50 to 22,000, each level with its own colour.</sub>
     </td>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-light.webp" alt="Switching the light between breathing, neon and steady, with the desk lit in its colour" width="100%"><br>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/lightbulb-on-light.svg">
+        <img src="docs/media/icons/lightbulb-on-dark.svg" alt="" width="48" height="48">
+      </picture><br>
       <b>Light, previewed</b><br>
       <sub>Each effect plays on the drawing and on the desk around it before you apply it.</sub>
     </td>
   </tr>
   <tr>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-test.webp" alt="Test mode counting clicks and drawing a dot for every report as the mouse moves" width="100%"><br>
-      <b>Test</b><br>
-      <sub>Clicks and wheel steps counted, worn switches caught double-clicking, the polling rate measured as it arrives.</sub>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/keyboard-light.svg">
+        <img src="docs/media/icons/keyboard-dark.svg" alt="" width="48" height="48">
+      </picture><br>
+      <b>Buttons and macros</b><br>
+      <sub>Any action or key combination, or a macro recorded from the keyboard.</sub>
     </td>
-    <td width="50%" valign="top">
-      <img src="docs/media/feature-history.webp" alt="Applying a change and opening the History with every setup the mouse has had" width="100%"><br>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bullseye-arrow-light.svg">
+        <img src="docs/media/icons/bullseye-arrow-dark.svg" alt="" width="48" height="48">
+      </picture><br>
+      <b>Test</b><br>
+      <sub>Clicks and wheel steps counted, worn switches caught, the polling rate measured live.</sub>
+    </td>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/reload-light.svg">
+        <img src="docs/media/icons/reload-dark.svg" alt="" width="48" height="48">
+      </picture><br>
       <b>Apply, undo, go back</b><br>
-      <sub>Every write is read back before it counts. Every setup the mouse has had is kept, one click from coming back.</sub>
+      <sub>Every write is read back before it counts, and every setup the mouse has had is kept.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/bookmarks-light.svg">
+        <img src="docs/media/icons/bookmarks-dark.svg" alt="" width="48" height="48">
+      </picture><br>
+      <b>Profiles</b><br>
+      <sub>Whole setups saved with an icon each, loaded in one click.</sub>
+    </td>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/battery-charging-light.svg">
+        <img src="docs/media/icons/battery-charging-dark.svg" alt="" width="48" height="48">
+      </picture><br>
+      <b>Battery</b><br>
+      <sub>Its last week as a chart, and the days it has left.</sub>
+    </td>
+    <td width="33%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: light)" srcset="docs/media/icons/radio-signal-light.svg">
+        <img src="docs/media/icons/radio-signal-dark.svg" alt="" width="48" height="48">
+      </picture><br>
+      <b>Three ways to connect</b><br>
+      <sub>The USB cable, the 2.4 GHz receiver or Bluetooth.</sub>
     </td>
   </tr>
 </table>
 
-Also: buttons as any action, key combination or a macro recorded from the keyboard; profiles with an icon each; the
-battery's last week and the days it has left; polling rate, angle snap, ripple control, key response and sleep. It works
-offline once opened, in English and Spanish, dark and light.
+Also polling rate, angle snap, ripple control, key response and sleep. It works offline once opened, in English and
+Spanish, dark and light.
 
 ## At a glance
 
